@@ -34,14 +34,18 @@ var CHECKINS = ['12:00', '13:00', '14:00'];
 var CHECKOUTS = ['12:00', '13:00', '14:00'];
 var FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
 var NUMBER_OBJECT = 8;
-var ROOMS = {min: 1, max: 4};
-var GUESTS = {min: 1, max: 6};
+var ROOMS = [1, 2, 3, 100];
+var GUESTS = [1, 2, 3, 0];
 var PRICE = 1000;
-var LOCATION_MIN_X = 0;
-var LOCATION_MIN_Y = 130;
-var LOCATION_MAX_Y = 630;
-var PIN_WIDTH = 50;
-var PIN_HEIGHT = 70;
+var mapLocations = {MIN_X: 0, MIN_Y: 130, MAX_Y: 630};
+var pinSizes = {WIDTH: 50, HEIGHT: 70};
+
+var locationMaxX = document.querySelector('.map').offsetWidth;
+var mapElement = document.querySelector('.map');
+// Шаблон метки
+var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
+// Элемент списка меток на карте
+var pinsMap = document.querySelector('.map__pins');
 
 // Получаем случайное число
 var getRandomNumber = function (min, max) {
@@ -74,30 +78,27 @@ var getRandomLenght = function (array) {
 // Создание массива из объектов
 var generateRandomObject = function (limit) {
   var result = [];
-  var locationMaxX = document.querySelector('.map').offsetWidth;
 
   for (var i = 1; i <= limit; i++) {
-    var locationX = getRandomNumber(LOCATION_MIN_X, locationMaxX);
-    var locationY = getRandomNumber(LOCATION_MIN_Y, LOCATION_MAX_Y);
-    var location = locationX + ', ' + locationY;
-    var avatarLocation = 'img/avatars/user0' + (i) + '.png';
+    var locationX = getRandomNumber(mapLocations.MIN_X, locationMaxX);
+    var locationY = getRandomNumber(mapLocations.MIN_Y, mapLocations.MAX_Y);
 
     result.push({
       author: {
-        avatar: avatarLocation
+        avatar: 'img/avatars/user0' + i + '.png',
       },
       offer: {
         title: getRandomElement(TITLES),
         description: getRandomElement(DESCRIPTIONS),
-        address: location,
-        type: getRandomElement(TYPES),
-        checkin: getRandomElement(CHECKINS),
-        checkout: getRandomElement(CHECKOUTS),
+        address: locationX + ', ' + locationY,
+        type: getRandomElement(TYPES), // случайный тип объявлений
+        checkin: getRandomElement(CHECKINS), // случайная дата заезда
+        checkout: getRandomElement(CHECKOUTS), // случайная дата выезда
         features: getRandomLenght(FEATURES, 0),
-        photo: getRandomLenght(PHOTOS),
-        rooms: getRandomNumber(ROOMS.min, ROOMS.max),
-        guests: getRandomNumber(GUESTS.min, GUESTS.max),
-        price: PRICE,
+        photo: getRandomLenght(PHOTOS), // случайное фото
+        rooms: getRandomNumber(ROOMS), // случайное кол комнат
+        guests: getRandomNumber(GUESTS), // случайное кол гостей
+        price: PRICE, // случайная цена
       },
       location: {
         x: locationX,
@@ -108,25 +109,15 @@ var generateRandomObject = function (limit) {
   return result;
 };
 
-// Показываем карту
-var mapElement = document.querySelector('.map');
-mapElement.classList.remove('map--faded');
-
-// Шаблон метки
-var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
-
-// Элемент списка меток на карте
-var pinsMap = document.querySelector('.map__pins');
-
 // Отрисовка метки
 var renderNewPin = function (newPin) {
   var newPinElement = pinTemplate.cloneNode(true);
+  newPinElement.style.left = newPin.location.x - (pinSizes.WIDTH * 0.5) + 'px';
+  newPinElement.style.top = newPin.location.y - pinSizes.HEIGHT + 'px';
 
-  newPinElement.style.left = newPin.location.x - (PIN_WIDTH * 0.5) + 'px';
-  newPinElement.style.top = newPin.location.y - PIN_HEIGHT + 'px';
-
-  newPinElement.querySelector('img').src = newPin.author.avatar;
-  newPinElement.querySelector('img').alt = newPin.offer.title;
+  var avatarPin = newPinElement.querySelector('img');
+  avatarPin.src = newPin.author.avatar;
+  avatarPin.alt = newPin.offer.title;
 
   return newPinElement;
 };
@@ -140,5 +131,11 @@ var renderNewPinOnMap = function (newPins) {
   pinsMap.appendChild(fragment);
 };
 
-var newPins = generateRandomObject(NUMBER_OBJECT);
-renderNewPinOnMap(newPins);
+// Показываем карту
+var init = function () {
+  var newPins = generateRandomObject(NUMBER_OBJECT);
+  renderNewPinOnMap(newPins);
+  mapElement.classList.remove('map--faded');
+};
+
+init();
