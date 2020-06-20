@@ -37,8 +37,9 @@ var NUMBER_OBJECT = 8;
 var ROOMS = [1, 2, 3, 100];
 var GUESTS = [1, 2, 3, 0];
 var PRICE = 1000;
-var mapLocations = {MIN_X: 0, MIN_Y: 130, MAX_Y: 630};
-var pinSizes = {WIDTH: 50, HEIGHT: 70};
+var MapLocations = {MIN_X: 0, MIN_Y: 130, MAX_Y: 630};
+var PinSizes = {WIDTH: 50, HEIGHT: 70};
+var typesRuss = {'palace': 'Дворец', 'flat': 'Квартира', 'house': 'Дом', 'bungalo': 'Бунгало'};
 
 var locationMaxX = document.querySelector('.map').offsetWidth;
 var mapElement = document.querySelector('.map');
@@ -46,6 +47,9 @@ var mapElement = document.querySelector('.map');
 var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
 // Элемент списка меток на карте
 var pinsMap = document.querySelector('.map__pins');
+// Шаблон карточки
+var cardTemplate = document.querySelector('#card').content.querySelector('.popup');
+var filtersContainer = document.querySelector('.map__filters-container');
 
 // Получаем случайное число
 var getRandomNumber = function (min, max) {
@@ -80,8 +84,8 @@ var generateRandomObject = function (limit) {
   var result = [];
 
   for (var i = 1; i <= limit; i++) {
-    var locationX = getRandomNumber(mapLocations.MIN_X, locationMaxX);
-    var locationY = getRandomNumber(mapLocations.MIN_Y, mapLocations.MAX_Y);
+    var locationX = getRandomNumber(MapLocations.MIN_X, locationMaxX);
+    var locationY = getRandomNumber(MapLocations.MIN_Y, MapLocations.MAX_Y);
 
     result.push({
       author: {
@@ -94,11 +98,11 @@ var generateRandomObject = function (limit) {
         type: getRandomElement(TYPES), // случайный тип объявлений
         checkin: getRandomElement(CHECKINS), // случайная дата заезда
         checkout: getRandomElement(CHECKOUTS), // случайная дата выезда
-        features: getRandomLenght(FEATURES, 0),
-        photo: getRandomLenght(PHOTOS), // случайное фото
-        rooms: getRandomNumber(ROOMS), // случайное кол комнат
-        guests: getRandomNumber(GUESTS), // случайное кол гостей
-        price: PRICE, // случайная цена
+        features: getRandomLenght(FEATURES, 1, 6),
+        photos: getRandomLenght(PHOTOS, 1, 4), // случайное фото
+        rooms: getRandomElement(ROOMS), // случайное кол комнат
+        guests: getRandomElement(GUESTS), // случайное кол гостей
+        price: (PRICE), // случайная цена
       },
       location: {
         x: locationX,
@@ -112,8 +116,8 @@ var generateRandomObject = function (limit) {
 // Отрисовка метки
 var renderNewPin = function (newPin) {
   var newPinElement = pinTemplate.cloneNode(true);
-  newPinElement.style.left = newPin.location.x - (pinSizes.WIDTH * 0.5) + 'px';
-  newPinElement.style.top = newPin.location.y - pinSizes.HEIGHT + 'px';
+  newPinElement.style.left = newPin.location.x - (PinSizes.WIDTH * 0.5) + 'px';
+  newPinElement.style.top = newPin.location.y - PinSizes.HEIGHT + 'px';
 
   var avatarPin = newPinElement.querySelector('img');
   avatarPin.src = newPin.author.avatar;
@@ -131,11 +135,66 @@ var renderNewPinOnMap = function (newPins) {
   pinsMap.appendChild(fragment);
 };
 
+
+var renderNewCard = function (newCard) {
+  var newCardElement = cardTemplate.cloneNode(true);
+
+  newCardElement.querySelector('.popup__title').textContent = newCard.offer.title;
+  newCardElement.querySelector('.popup__text--address').textContent = newCard.offer.address;
+  newCardElement.querySelector('.popup__text--price').textContent = newCard.offer.price + '₽/ночь';
+  newCardElement.querySelector('.popup__type').textContent = typesRuss[newCard.offer.type];
+  newCardElement.querySelector('.popup__text--capacity').textContent = newCard.offer.rooms + ' комнат(ы) для ' + newCard.offer.guests + ' гостей';
+  newCardElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + newCard.offer.checkin + ', выезд до ' + newCard.offer.checkout;
+  newCardElement.querySelector('.popup__description').textContent = newCard.offer.description;
+  newCardElement.querySelector('.popup__avatar').src = newCard.author.avatar;
+
+
+  var offerFeatures = newCardElement.querySelector('.popup__features');
+  var fragment = document.createDocumentFragment();
+
+  offerFeatures.innerHTML = '';
+  offerFeatures.appendChild(fragment);
+
+  if (newCard.offer.photos.length > 0) {
+    for (var i = 0; i < newCard.offer.features.length; i++) {
+      var feature = document.createElement('li');
+      feature.classList.add('popup__feature', 'popup__feature--' + newCard.offer.features[i]);
+      fragment.appendChild(feature);
+    }
+  }
+
+  // добавить фото для карточки
+  var offerPhotos = newCardElement.querySelector('.popup__photos');
+
+  offerPhotos.innerHTML = '';
+
+  if (newCard.offer.photos.length > 0) {
+    for (var l = 0; l < newCard.offer.photos.length; l++) {
+      var photo = document.createElement('img');
+      photo.src = newCard.offer.photos[l];
+      photo.width = 45;
+      photo.height = 40;
+      photo.alt = 'Фотография жилья';
+      offerPhotos.appendChild(photo);
+    }
+  }
+
+  return newCardElement;
+};
+
+
+var getCard = function (newCard) {
+  if (newCard) {
+    mapElement.insertBefore(renderNewCard(newCard), filtersContainer);
+  }
+};
+
 // Показываем карту
 var init = function () {
   var newPins = generateRandomObject(NUMBER_OBJECT);
   renderNewPinOnMap(newPins);
   mapElement.classList.remove('map--faded');
+  getCard(newPins[0]);
 };
 
 init();
