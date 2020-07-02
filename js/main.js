@@ -40,23 +40,24 @@ var MapLocations = {MIN_X: 0, MIN_Y: 130, MAX_Y: 630};
 var PinSizes = {WIDTH: 50, HEIGHT: 70};
 var PinMainSizes = {WIDTH: 62, HEIGHT: 62, HEIGHT_ACTIVE: 22};
 var priceMin = {bungalo: 0, flat: 1000, house: 5000, palace: 10000};
-// var PhotoSizes = {WIDTH: 45, HEIGHT: 40};
-// var PHOTO_ALT = ['Фотография жилья'];
+var PhotoSizes = {WIDTH: 45, HEIGHT: 40};
+var PHOTO_ALT = ['Фотография жилья'];
 var typesRoom = {'palace': 'Дворец', 'flat': 'Квартира', 'house': 'Дом', 'bungalo': 'Бунгало'};
 var TYPES = Object.keys(typesRoom);
 var locationMaxX = document.querySelector('.map').offsetWidth;
 var mapElement = document.querySelector('.map');
-// var mapCard = document.querySelector('.map__card');
 var mapPins = mapElement.querySelector('.map__pins');
 var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
+
 var mapPinMain = document.querySelector('.map__pin--main');
-// var cardTemplate = document.querySelector('#card').content.querySelector('.popup');
-// var filtersContainer = document.querySelector('.map__filters-container');
+var cardTemplate = document.querySelector('#card').content.querySelector('.popup');
+var filtersContainer = document.querySelector('.map__filters-container');
+var mapFilters = document.querySelector('.map__filters');
+var mapFiltersForm = mapFilters.querySelectorAll('fieldset, select, input');
 var addressInput = document.querySelector('#address');
 var adForm = document.querySelector('.ad-form');
-var mapFiltersForm = document.querySelector('.map__filters');
+var mapFieildForm = adForm.querySelectorAll('fieldset, select, input');
 var mapSubmitForm = adForm.querySelector('.ad-form__submit');
-var mapFieldsForm = adForm.querySelectorAll('fieldset, select, input');
 var titleInput = adForm.querySelector('#title');
 var roomsSelect = adForm.querySelector('#room_number');
 var capacitySelect = adForm.querySelector('#capacity');
@@ -109,10 +110,10 @@ var generateRandomObject = function (limit) {
         title: getRandomElement(TITLES),
         description: getRandomElement(DESCRIPTIONS),
         address: locationX + ', ' + locationY,
-        type: getRandomElement(TYPES), // случайный тип объявлений
+        type: getRandomElement(TYPES), // случайный тип жилья
         checkin: getRandomElement(CHECKIN), // случайная дата заезда
         checkout: getRandomElement(CHECKOUT), // случайная дата выезда
-        features: getRandomLenght(FEATURES),
+        features: getRandomLenght(FEATURES), // случайные допольнитеьные опции
         photos: getRandomLenght(PHOTOS), // случайное фото
         rooms: getRandomElement(ROOMS), // случайное кол комнат
         guests: getRandomElement(GUESTS), // случайное кол гостей
@@ -138,10 +139,11 @@ var renderNewPin = function (newPin) {
   avatarPin.alt = newPin.offer.title;
 
 
-  // newPinElement.addEventListener('click', function () {
-  //   mapElement.insertBefore(renderNewCard(newPin), filtersContainer);
-  //   document.addEventListener('keydown', CardEscDown, pinMainKeyDown);
-  // });
+  newPinElement.addEventListener('click', function () {
+    closeCard(); // закрыть предыдушую карту
+    mapElement.insertBefore(renderNewCard(newPin), filtersContainer);
+    document.addEventListener('keydown', CardEscDown, pinMainKeyDown);
+  });
 
   return newPinElement;
 };
@@ -160,65 +162,67 @@ var postNewPin = function (newPins) {
   mapPins.appendChild(fragment);
 };
 
-// var hideElement = function (element) {
-//   element.classList.add('hidden');
-// };
+var hideElement = function (element) {
+  element.classList.add('hidden');
+};
 
-// // Генерировать предложение для карточки
-// var renderFeatures = function (container, features) {
-//   container.innerHTML = '';
-//   if (features.length) {
-//     for (var i = 0; i < features.length; i++) {
-//       var feature = document.createElement('li');
-//       feature.classList.add('popup__feature', 'popup__feature--' + features[i]);
-//       container.appendChild(feature);
-//     }
-//   } else {
-//     hideElement(container);
-//   }
-// };
+// Генерировать предложение для карточки
+var renderFeatures = function (container, features) {
+  container.innerHTML = '';
+  if (features.length) {
+    for (var i = 0; i < features.length; i++) {
+      var feature = document.createElement('li');
+      feature.classList.add('popup__feature', 'popup__feature--' + features[i]);
+      container.appendChild(feature);
+    }
+  } else {
+    hideElement(container);
+  }
+};
 
-// // Генерировать фото для карточки
-// var renderPhotos = function (container, photos) {
-//   container.innerHTML = '';
+// Генерировать фото для карточки
+var renderPhotos = function (container, photos) {
+  container.innerHTML = '';
 
-//   if (photos.length) {
-//     for (var i = 0; i < photos.length; i++) {
-//       var photo = document.createElement('img');
-//       photo.classList.add('popup__photo');
-//       photo.src = photos[i];
-//       photo.sizes = PhotoSizes.WIDTH;
-//       photo.height = PhotoSizes.HEIGHT;
-//       photo.alt = PHOTO_ALT;
-//       container.appendChild(photo);
-//     }
-//   } else {
-//     hideElement(container);
-//   }
-// };
+  if (photos.length) {
+    for (var i = 0; i < photos.length; i++) {
+      var photo = document.createElement('img');
+      photo.classList.add('popup__photo');
+      photo.src = photos[i];
+      photo.sizes = PhotoSizes.WIDTH;
+      photo.height = PhotoSizes.HEIGHT;
+      photo.alt = PHOTO_ALT;
+      container.appendChild(photo);
+    }
+  } else {
+    hideElement(container);
+  }
+};
 
-// // Отрисовка карточки предложений
-// var renderNewCard = function (newCard) {
-//   var newCardElement = cardTemplate.cloneNode(true);
-//   var offerFeatures = newCardElement.querySelector('.popup__features');
-//   var offerPhotos = newCardElement.querySelector('.popup__photos');
-//   var popupClose = newCardElement.querySelector('.popup__close');
+// Отрисовка карточки предложений
+var renderNewCard = function (newCard) {
+  var newCardElement = cardTemplate.cloneNode(true);
+  var offerFeatures = newCardElement.querySelector('.popup__features');
+  var offerPhotos = newCardElement.querySelector('.popup__photos');
 
-//   newCardElement.querySelector('.popup__title').textContent = newCard.offer.title || 'no value';
-//   newCardElement.querySelector('.popup__text--address').textContent = newCard.offer.address || 'no value';
-//   newCardElement.querySelector('.popup__text--price').textContent = newCard.offer.price + '₽/ночь' || 'no value';
-//   newCardElement.querySelector('.popup__type').textContent = typesRoom[newCard.offer.type] || 'no value';
-//   newCardElement.querySelector('.popup__text--capacity').textContent = newCard.offer.rooms + ' комнат(ы) для ' + newCard.offer.guests + ' гостей' || 'no value';
-//   newCardElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + newCard.offer.checkin + ', выезд до ' + newCard.offer.checkout || 'no value';
-//   newCardElement.querySelector('.popup__avatar').src = newCard.author.avatar || 'no value';
-//   renderFeatures(offerFeatures, newCard.offer.features);
-//   newCardElement.querySelector('.popup__description').textContent = newCard.offer.description || 'no value';
-//   renderPhotos(offerPhotos, newCard.offer.photos);
+  newCardElement.querySelector('.popup__title').textContent = newCard.offer.title || 'no value';
+  newCardElement.querySelector('.popup__text--address').textContent = newCard.offer.address || 'no value';
+  newCardElement.querySelector('.popup__text--price').textContent = newCard.offer.price + '₽/ночь' || 'no value';
+  newCardElement.querySelector('.popup__type').textContent = typesRoom[newCard.offer.type] || 'no value';
+  newCardElement.querySelector('.popup__text--capacity').textContent = newCard.offer.rooms + ' комнат(ы) для ' + newCard.offer.guests + ' гостей' || 'no value';
+  newCardElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + newCard.offer.checkin + ', выезд до ' + newCard.offer.checkout || 'no value';
+  newCardElement.querySelector('.popup__avatar').src = newCard.author.avatar || 'no value';
+  renderFeatures(offerFeatures, newCard.offer.features);
+  newCardElement.querySelector('.popup__description').textContent = newCard.offer.description || 'no value';
+  renderPhotos(offerPhotos, newCard.offer.photos);
 
-//   popupClose.addEventListener('click', CardEscDown, pinMainKeyDown);
+  newCardElement.addEventListener('click', function () {
+    closeCard();
+    document.addEventListener('keydown', CardEscDown, pinMainKeyDown);
+  });
 
-//   return newCardElement;
-// };
+  return newCardElement;
+};
 
 // Домашняя рабта 4-2
 
@@ -263,7 +267,6 @@ var installTimeOut = function () {
   timeIn.value = timeOut.value;
 };
 
-
 // Неактивные элементы
 var disableElements = function (elements) {
   for (var i = 0; i < elements.length; i++) {
@@ -277,42 +280,45 @@ var enableElements = function (elements) {
     elements[i].removeAttribute('disabled');
   }
 };
-
+// ?????????????поставила - evt.preventDefault, как в демке, но совсем не поняла зачем, вроде без него все работает??????????????????
 // обработчики событий
 var pinMainMouseDown = function (evt) {
   if (evt.which === 1) {
     activePage();
   }
+  evt.preventDefault();
 };
 
 var pinMainKeyDown = function (evt) {
   if (evt.key === 'Enter') {
-    evt.preventDefault();
-    activePage();
-    // closeCard();
+    closeCard();
+  }
+  evt.preventDefault();
+};
+
+var CardEscDown = function (evt) {
+  if (evt.key === 'Escape') {
+    closeCard();
+  }
+  evt.preventDefault();
+};
+
+// Удалить карточку
+var closeCard = function () {
+  var mapCard = document.querySelector('.map__card');
+  if (mapCard) {
+    mapCard.querySelector('.popup__close').removeEventListener('click', CardEscDown, pinMainKeyDown);
+    document.removeEventListener('keydown', CardEscDown, pinMainKeyDown);
+    mapCard.remove(); // Удаляем все старые объявления
   }
 };
 
-// var CardEscDown = function (evt) {
-//   if (evt.key === 'Escape') {
-//     evt.preventDefault();
-//     closeCard();
-//   }
+// ?????????? Не знаю нужна ли эта функция? Веь можно действия внутри нее разместить в функции activePage, что я и сделала, но если надо, я могу вернуть?????????????????????
+// // Удаляем обработчик нажатия на главный пин при активации карты
+// var closePinMainEventListener = function () {
+//   mapPinMain.removeEventListener('keydown', pinMainKeyDown);
+//   mapPinMain.removeEventListener('mousedown', pinMainMouseDown);
 // };
-
-// // Удалить карточку
-// var closeCard = function () {
-//   if (mapCard) {
-//     mapCard.remove();
-//   }
-//   document.removeEventListener('keydown', pinMainKeyDown);
-// };
-
-// Удаляем обработчик нажатия на главный пин при активации карты
-var closePinMainEventListener = function () {
-  mapPinMain.removeEventListener('keydown', pinMainKeyDown);
-  mapPinMain.removeEventListener('mousedown', pinMainMouseDown);
-};
 
 //  Определяем позицию главного пина
 var getPinMainPosition = function (activeState) {
@@ -326,32 +332,32 @@ var getPinMainPosition = function (activeState) {
   addressInput.value = positionLeft + ', ' + positionTop;
 };
 
-// Спрятать карту
-var deactivePage = function () {
-  mapElement.classList.add('map--faded');
-  adForm.classList.add('ad-form--disabled');
-  mapFiltersForm.setAttribute('disabled', 'disabled');
-};
-
 // Активное состоние страницы
 var activePage = function () {
   mapElement.classList.remove('map--faded');
   adForm.classList.remove('ad-form--disabled');
-  mapFiltersForm.removeAttribute('disabled');
-  enableElements(mapFieldsForm);
+  mapFilters.removeAttribute('disabled');
+  enableElements(mapFiltersForm);
+  enableElements(mapFieildForm);
   getPinMainPosition(true);
   addressInput.setAttribute('readonly', 'readonly');
   titleInput.addEventListener('input', checkTitle);
   var newPins = generateRandomObject(NUMBER_OBJECT);
   postNewPin(newPins);
+  // ??????????Если удалть нижестоящую стрчку, то при активации карты не будет открыт ни один пин, а он нужен вообще открытый?????????????????????
   // mapElement.insertBefore(renderNewCard(newPins[0]), filtersContainer);
-  closePinMainEventListener();
+  // closePinMainEventListener();
+  mapPinMain.removeEventListener('keydown', pinMainKeyDown);
+  mapPinMain.removeEventListener('mousedown', pinMainMouseDown);
 };
 
+// ?????????? Я обьединила функции init и deactivePage потому что я так понимаю, что они выполняют одно и тоже действие, тогда нужны ли они обе?????????????????????
 // Неактивное состояние страницы
-var init = function () {
-  enableElements(deactivePage);
-  disableElements(mapFieldsForm);
+var deactivePage = function () {
+  disableElements(mapFiltersForm);
+  mapElement.classList.add('map--faded');
+  adForm.classList.add('ad-form--disabled');
+  mapFilters.setAttribute('disabled', 'disabled');
 };
 
 roomsSelect.addEventListener('change', checkRoomsAndCapacity);
@@ -363,4 +369,6 @@ timeOut.addEventListener('change', installTimeOut);
 mapPinMain.addEventListener('mousedown', pinMainMouseDown);
 mapPinMain.addEventListener('keydown', pinMainKeyDown);
 
-init();
+deactivePage();
+
+
