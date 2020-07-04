@@ -48,7 +48,6 @@ var locationMaxX = document.querySelector('.map').offsetWidth;
 var mapElement = document.querySelector('.map');
 var mapPins = mapElement.querySelector('.map__pins');
 var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
-
 var mapPinMain = document.querySelector('.map__pin--main');
 var cardTemplate = document.querySelector('#card').content.querySelector('.popup');
 var filtersContainer = document.querySelector('.map__filters-container');
@@ -142,7 +141,7 @@ var renderNewPin = function (newPin) {
   newPinElement.addEventListener('click', function () {
     closeCard(); // закрыть предыдушую карту
     mapElement.insertBefore(renderNewCard(newPin), filtersContainer);
-    document.addEventListener('keydown', CardEscDown, pinMainKeyDown);
+    document.addEventListener('keydown', onHandlerEscDown, onHandlerKeyDown);
   });
 
   return newPinElement;
@@ -162,40 +161,27 @@ var postNewPin = function (newPins) {
   mapPins.appendChild(fragment);
 };
 
-var hideElement = function (element) {
-  element.classList.add('hidden');
-};
-
 // Генерировать предложение для карточки
 var renderFeatures = function (container, features) {
   container.innerHTML = '';
-  if (features.length) {
-    for (var i = 0; i < features.length; i++) {
-      var feature = document.createElement('li');
-      feature.classList.add('popup__feature', 'popup__feature--' + features[i]);
-      container.appendChild(feature);
-    }
-  } else {
-    hideElement(container);
+  for (var i = 0; i < features.length; i++) {
+    var feature = document.createElement('li');
+    feature.classList.add('popup__feature', 'popup__feature--' + features[i]);
+    container.appendChild(feature);
   }
 };
 
 // Генерировать фото для карточки
 var renderPhotos = function (container, photos) {
   container.innerHTML = '';
-
-  if (photos.length) {
-    for (var i = 0; i < photos.length; i++) {
-      var photo = document.createElement('img');
-      photo.classList.add('popup__photo');
-      photo.src = photos[i];
-      photo.sizes = PhotoSizes.WIDTH;
-      photo.height = PhotoSizes.HEIGHT;
-      photo.alt = PHOTO_ALT;
-      container.appendChild(photo);
-    }
-  } else {
-    hideElement(container);
+  for (var i = 0; i < photos.length; i++) {
+    var photo = document.createElement('img');
+    photo.classList.add('popup__photo');
+    photo.src = photos[i];
+    photo.sizes = PhotoSizes.WIDTH;
+    photo.height = PhotoSizes.HEIGHT;
+    photo.alt = PHOTO_ALT;
+    container.appendChild(photo);
   }
 };
 
@@ -205,20 +191,20 @@ var renderNewCard = function (newCard) {
   var offerFeatures = newCardElement.querySelector('.popup__features');
   var offerPhotos = newCardElement.querySelector('.popup__photos');
 
-  newCardElement.querySelector('.popup__title').textContent = newCard.offer.title || 'no value';
-  newCardElement.querySelector('.popup__text--address').textContent = newCard.offer.address || 'no value';
-  newCardElement.querySelector('.popup__text--price').textContent = newCard.offer.price + '₽/ночь' || 'no value';
-  newCardElement.querySelector('.popup__type').textContent = typesRoom[newCard.offer.type] || 'no value';
-  newCardElement.querySelector('.popup__text--capacity').textContent = newCard.offer.rooms + ' комнат(ы) для ' + newCard.offer.guests + ' гостей' || 'no value';
-  newCardElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + newCard.offer.checkin + ', выезд до ' + newCard.offer.checkout || 'no value';
-  newCardElement.querySelector('.popup__avatar').src = newCard.author.avatar || 'no value';
+  newCardElement.querySelector('.popup__title').textContent = newCard.offer.title;
+  newCardElement.querySelector('.popup__text--address').textContent = newCard.offer.address;
+  newCardElement.querySelector('.popup__text--price').textContent = newCard.offer.price + '₽/ночь';
+  newCardElement.querySelector('.popup__type').textContent = typesRoom[newCard.offer.type];
+  newCardElement.querySelector('.popup__text--capacity').textContent = newCard.offer.rooms + ' комнат(ы) для ' + newCard.offer.guests + ' гостей';
+  newCardElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + newCard.offer.checkin + ', выезд до ' + newCard.offer.checkout;
+  newCardElement.querySelector('.popup__avatar').src = newCard.author.avatar;
   renderFeatures(offerFeatures, newCard.offer.features);
-  newCardElement.querySelector('.popup__description').textContent = newCard.offer.description || 'no value';
+  newCardElement.querySelector('.popup__description').textContent = newCard.offer.description;
   renderPhotos(offerPhotos, newCard.offer.photos);
 
   newCardElement.addEventListener('click', function () {
     closeCard();
-    document.addEventListener('keydown', CardEscDown, pinMainKeyDown);
+    document.addEventListener('keydown', onHandlerEscDown, onHandlerKeyDown);
   });
 
   return newCardElement;
@@ -280,45 +266,44 @@ var enableElements = function (elements) {
     elements[i].removeAttribute('disabled');
   }
 };
-// ?????????????поставила - evt.preventDefault, как в демке, но совсем не поняла зачем, вроде без него все работает??????????????????
+
 // обработчики событий
-var pinMainMouseDown = function (evt) {
+var onHandlerMouseDown = function (evt) {
+  evt.preventDefault();
   if (evt.which === 1) {
     activePage();
   }
-  evt.preventDefault();
 };
 
-var pinMainKeyDown = function (evt) {
+var onHandlerKeyDown = function (evt) {
+  evt.preventDefault();
   if (evt.key === 'Enter') {
     closeCard();
   }
-  evt.preventDefault();
 };
 
-var CardEscDown = function (evt) {
+var onHandlerEscDown = function (evt) {
+  evt.preventDefault();
   if (evt.key === 'Escape') {
     closeCard();
   }
-  evt.preventDefault();
+};
+
+// Закрываем обработчик нажатия на главный пин при активации карты
+var closehandlerEventListener = function () {
+  mapPinMain.removeEventListener('keydown', onHandlerKeyDown);
+  mapPinMain.removeEventListener('mousedown', onHandlerMouseDown);
 };
 
 // Удалить карточку
 var closeCard = function () {
   var mapCard = document.querySelector('.map__card');
   if (mapCard) {
-    mapCard.querySelector('.popup__close').removeEventListener('click', CardEscDown, pinMainKeyDown);
-    document.removeEventListener('keydown', CardEscDown, pinMainKeyDown);
+    mapCard.querySelector('.popup__close');
+    document.removeEventListener('keydown', onHandlerEscDown, onHandlerKeyDown);
     mapCard.remove(); // Удаляем все старые объявления
   }
 };
-
-// ?????????? Не знаю нужна ли эта функция? Веь можно действия внутри нее разместить в функции activePage, что я и сделала, но если надо, я могу вернуть?????????????????????
-// // Удаляем обработчик нажатия на главный пин при активации карты
-// var closePinMainEventListener = function () {
-//   mapPinMain.removeEventListener('keydown', pinMainKeyDown);
-//   mapPinMain.removeEventListener('mousedown', pinMainMouseDown);
-// };
 
 //  Определяем позицию главного пина
 var getPinMainPosition = function (activeState) {
@@ -344,20 +329,21 @@ var activePage = function () {
   titleInput.addEventListener('input', checkTitle);
   var newPins = generateRandomObject(NUMBER_OBJECT);
   postNewPin(newPins);
-  // ??????????Если удалть нижестоящую стрчку, то при активации карты не будет открыт ни один пин, а он нужен вообще открытый?????????????????????
+  closehandlerEventListener();
   // mapElement.insertBefore(renderNewCard(newPins[0]), filtersContainer);
-  // closePinMainEventListener();
-  mapPinMain.removeEventListener('keydown', pinMainKeyDown);
-  mapPinMain.removeEventListener('mousedown', pinMainMouseDown);
 };
 
-// ?????????? Я обьединила функции init и deactivePage потому что я так понимаю, что они выполняют одно и тоже действие, тогда нужны ли они обе?????????????????????
 // Неактивное состояние страницы
 var deactivePage = function () {
-  disableElements(mapFiltersForm);
   mapElement.classList.add('map--faded');
   adForm.classList.add('ad-form--disabled');
   mapFilters.setAttribute('disabled', 'disabled');
+};
+
+// Неактивное состояние страницы
+var init = function () {
+  enableElements(deactivePage);
+  disableElements(mapFieildForm);
 };
 
 roomsSelect.addEventListener('change', checkRoomsAndCapacity);
@@ -366,9 +352,9 @@ mapSubmitForm.addEventListener('click', checkRoomsAndCapacity);
 typeSelect.addEventListener('change', installTypeAndPrice);
 timeIn.addEventListener('change', installTimeIn);
 timeOut.addEventListener('change', installTimeOut);
-mapPinMain.addEventListener('mousedown', pinMainMouseDown);
-mapPinMain.addEventListener('keydown', pinMainKeyDown);
+mapPinMain.addEventListener('mousedown', onHandlerMouseDown);
+mapPinMain.addEventListener('keydown', onHandlerKeyDown);
 
-deactivePage();
+init();
 
 
