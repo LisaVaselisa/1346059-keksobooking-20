@@ -29,7 +29,7 @@
   window.main = {
     onHandlerMouseDown: onHandlerMouseDown,
     onHandlerKeyDown: onHandlerKeyDown,
-    onHandlerEscDown: onHandlerEscDown,
+    onHandlerEscDown: onHandlerEscDown
   };
 
 })();

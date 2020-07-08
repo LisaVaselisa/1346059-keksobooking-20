@@ -5,8 +5,8 @@
   var PinSizes = {WIDTH: 50, HEIGHT: 70};
   var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
   var mapElement = document.querySelector('.map');
+  var mapPins = document.querySelector('.map__pins');
   var filtersContainer = document.querySelector('.map__filters-container');
-
 
   // Отрисовка метки
   var renderNewPin = function (newPin) {
@@ -21,18 +21,38 @@
     newPinElement.addEventListener('click', function () {
       window.card.closeCard(); // закрыть предыдушую карту
       mapElement.insertBefore(window.card.renderNewCard(newPin), filtersContainer);
-      document.addEventListener('keydown', window.main.onHandlerEscDown);
+      document.addEventListener('eskdown', window.main.onHandlerEscDown);
       document.addEventListener('keydown', window.main.onHandlerKeyDown);
     });
 
     return newPinElement;
   };
 
+  // Разместить метку на карте
+  var postNewPin = function (newPins) {
+    var fragment = document.createDocumentFragment();
+
+    for (var i = 0; i < newPins.length; i++) {
+      fragment.appendChild(renderNewPin(newPins[i]));
+
+      if (newPins[i].offer) {
+        fragment.appendChild(renderNewPin(newPins[i]));
+      }
+    }
+    mapPins.appendChild(fragment);
+  };
+  // Закрываем обработчик нажатия на главный пин при активации карты
+  var closehandlerEventListener = function () {
+    window.map.mapPinMain.removeEventListener('keydown', window.main.onHandlerKeyDown);
+    window.map.mapPinMain.removeEventListener('mousedown', window.main.onHandlerMouseDown);
+  };
+
   window.pin = {
     mapElement: mapElement,
-    renderNewPin: renderNewPin
+    filtersContainer: filtersContainer,
+    postNewPin: postNewPin,
+    renderNewPin: renderNewPin,
+    closehandlerEventListener: closehandlerEventListener
   };
 
 })();
-
-

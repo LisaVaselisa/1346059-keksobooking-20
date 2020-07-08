@@ -19,7 +19,6 @@
   var timeIn = document.querySelector('#timein');
   var timeOut = document.querySelector('#timeout');
 
-
   // Неактивные элементы
   var disableElements = function (elements) {
     for (var i = 0; i < elements.length; i++) {
@@ -77,24 +76,23 @@
 
   // Активное состоние страницы
   var activePage = function () {
-    window.pin.mapElement.classList.remove('map--faded');
+    window.pin.mapElement.classList.remove('map--faded'); // переводим в неактивное состояние
     adForm.classList.remove('ad-form--disabled');
     mapFilters.removeAttribute('disabled');
+    addressInput.setAttribute('readonly', 'readonly');
+    titleForm.addEventListener('input', checkTitle);
+    var newPins = window.data.generateRandomObject(NUMBER_OBJECT);
+    window.pin.postNewPin(newPins);
+    window.pin.closehandlerEventListener();
     enableElements(mapFiltersForm);
     enableElements(mapFieldForm);
     window.map.getPinMainPosition(true);
-    addressInput.setAttribute('readonly', 'readonly');
-
-    titleForm.addEventListener('input', checkTitle);
-    var newPins = window.data.generateRandomObject(NUMBER_OBJECT);
-    window.map.postNewPin(newPins);
-    window.map.closehandlerEventListener();
-    // window.pin.mapElement.insertBefore(renderNewCard(newPins[0]), filtersContainer);
+    // window.pin.mapElement.insertBefore(window.card.renderNewCard(newPins[0]), window.pin.filtersContainer);
   };
 
   // Неактивное состояние страницы
   var deactivePage = function () {
-    window.pin.mapElement.classList.add('map--faded');
+    window.pin.mapElement.classList.add('map--faded'); // переводим в активное состояние
     adForm.classList.add('ad-form--disabled');
     mapFilters.setAttribute('disabled', true);
   };
@@ -102,7 +100,7 @@
   // Неактивное состояние страницы
   var init = function () {
     enableElements(deactivePage);
-    disableElements(mapFieldForm);
+    disableElements(mapFiltersForm);
   };
 
   roomsSelect.addEventListener('change', checkRoomsAndCapacity);
@@ -122,5 +120,3 @@
     deactivePage: deactivePage
   };
 })();
-
-
