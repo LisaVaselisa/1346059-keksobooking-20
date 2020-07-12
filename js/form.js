@@ -2,8 +2,7 @@
 // работает с формой объявления
 
 (function () {
-
-  var NUMBER_OBJECT = 8;
+  var newPins = [];
   var priceMin = {bungalo: 0, flat: 1000, house: 5000, palace: 10000};
   var adForm = document.querySelector('.ad-form');
   var adFormSubmit = adForm.querySelector('.ad-form__submit');
@@ -74,6 +73,10 @@
     timeIn.value = timeOut.value;
   };
 
+  var savePins = function (data) {
+    newPins = data;
+  };
+
   // Активное состоние страницы
   var activePage = function () {
     window.pin.mapElement.classList.remove('map--faded'); // переводим в неактивное состояние
@@ -81,8 +84,7 @@
     mapFilters.removeAttribute('disabled');
     addressInput.setAttribute('readonly', 'readonly');
     titleForm.addEventListener('input', checkTitle);
-    var newPins = window.data.generateRandomObject(NUMBER_OBJECT);
-    window.pin.postNewPin(newPins);
+    window.pin.postPins(newPins);
     window.pin.closehandlerEventListener();
     enableElements(mapFiltersForm);
     enableElements(mapFieldForm);
@@ -97,10 +99,10 @@
     mapFilters.setAttribute('disabled', true);
   };
 
-  // Неактивное состояние страницы
   var init = function () {
     enableElements(deactivePage);
     disableElements(mapFiltersForm);
+    window.backend.loadData(window.main.onSuccessLoad, window.main.onErrorLoad);
   };
 
   roomsSelect.addEventListener('change', checkRoomsAndCapacity);
@@ -117,6 +119,7 @@
     enableElements: enableElements,
     checkTitle: checkTitle,
     activePage: activePage,
-    deactivePage: deactivePage
+    deactivePage: deactivePage,
+    savePins: savePins
   };
 })();

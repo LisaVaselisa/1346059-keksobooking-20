@@ -5,13 +5,15 @@
 // осуществляет взаимодействие карточки и метки на карте
 
 (function () {
+  var MapLimits = {MIN_X: 0, MIN_Y: 130, MAX_Y: 630};
   var PIN_MAIN_HEIGHT_ACTIVE = 22;
+  var locationMaxX = document.querySelector('.map__overlay').offsetWidth;
   var mapPinMain = document.querySelector('.map__pin--main');
 
   var getPinMainPosition = function (activeState) {
     if (activeState === true) {
       var positionLeft = Math.round(mapPinMain.offsetLeft + mapPinMain.offsetWidth / 2);
-      var positionTop = Math.round(mapPinMain.offsetTop + mapPinMain.offsetHeight / 2);
+      var positionTop = Math.round(mapPinMain.offsetTop + mapPinMain.offsetHeight);
     } else {
       positionLeft = Math.round(mapPinMain.offsetLeft + mapPinMain.offsetWidth / 2);
       positionTop = Math.round(mapPinMain.offsetTop + mapPinMain.offsetHeight + PIN_MAIN_HEIGHT_ACTIVE);
@@ -22,55 +24,32 @@
   mapPinMain.addEventListener('mousedown', window.main.onHandlerMouseDown);
   mapPinMain.addEventListener('keydown', window.main.onHandlerKeyDown);
 
-  // 5-3 ПЕРЕМЕЩЕНИЕ
-  // главный пин и его перемещение
-  var positionLeft = window.data.mapLimitsMinX - mapPinMain.offsetWidth / 2;
-  var positionRight = window.data.mapLimitsMaxX - mapPinMain.offsetWidth / 2;
-  var positionTop = window.data.mapLimitsMinY - mapPinMain.offsetHeight - PIN_MAIN_HEIGHT_ACTIVE;
-  var positionBottom = window.data.mapLimitsMaxY - mapPinMain.offsetHeight - PIN_MAIN_HEIGHT_ACTIVE;
+  // // 5-3 ПЕРЕМЕЩЕНИЕ
+  // // главный пин и его перемещение
+  // var positionLeft = window.data.mapLimitsMinX - mapPinMain.offsetWidth / 2;
+  // var positionRight = window.data.mapLimitsMaxX - mapPinMain.offsetWidth / 2;
+  // var positionTop = window.data.mapLimitsMinY - mapPinMain.offsetHeight - PIN_MAIN_HEIGHT_ACTIVE;
+  // var positionBottom = window.data.mapLimitsMaxY - mapPinMain.offsetHeight - PIN_MAIN_HEIGHT_ACTIVE;
 
   var onMouseDown = function (evt) {
     evt.preventDefault();
-    var startCoords = {
-      x: evt.clientX,
-      y: evt.clientY
-    };
+
+    var mapPosition = window.pin.mapElement.getBoundingClientRect();
 
     var onMouseMove = function (moveEvt) {
       moveEvt.preventDefault();
       getPinMainPosition();
 
-      // Разница между стартовыми координатами и текущим пложением курсора - смещение
-      var shift = {
-        x: startCoords.x - moveEvt.clientX,
-        y: startCoords.y - moveEvt.clientY
-      };
-
-      startCoords = {
-        x: moveEvt.clientX,
-        y: moveEvt.clientY
-      };
-
       var result = {
-        x: mapPinMain.offsetLeft - shift.x,
-        y: mapPinMain.offsetTop - shift.y
+        y: moveEvt.clientY - mapPosition.top,
+        x: moveEvt.clientX - mapPosition.left
       };
 
-      if (result.x <= positionLeft) {
-        result.x = positionLeft;
-      } else if (result.x >= positionRight) {
-        result.x = positionRight;
-      }
-
-      if (result.y <= positionTop) {
-        result.y = positionTop;
-      } else if (result.y >= positionBottom) {
-        result.y = positionBottom;
-      }
+      mapPinMain.style.top = Math.max(MapLimits.MIN_Y, Math.min(MapLimits.MAX_Y, result.y)) - mapPinMain.offsetHeight + PIN_MAIN_HEIGHT_ACTIVE + 'px';
+      mapPinMain.style.left = Math.max(MapLimits.MIN_X, Math.min(locationMaxX, result.x)) - mapPinMain.offsetWidth / 2 + 'px';
 
       // Добавляем смещение к текущим координатам
-      mapPinMain.style.top = result.y + 'px';
-      mapPinMain.style.left = result.x + 'px';
+
     };
 
     // Останавливаем перетаскивание
@@ -84,6 +63,7 @@
 
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
+
   };
 
   mapPinMain.addEventListener('mousedown', onMouseDown);

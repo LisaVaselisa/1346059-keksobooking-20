@@ -10,25 +10,26 @@
   // Генерировать предложение для карточки
   var renderFeatures = function (container, features) {
     container.innerHTML = '';
-    for (var i = 0; i < features.length; i++) {
-      var feature = document.createElement('li');
-      feature.classList.add('popup__feature', 'popup__feature--' + features[i]);
-      container.appendChild(feature);
-    }
+    features.forEach(function (feature) {
+      var featureElement = document.createElement('li');
+      featureElement.classList.add('popup__feature', 'popup__feature--' + feature);
+      container.appendChild(featureElement);
+    });
   };
 
   // Генерировать фото для карточки
   var renderPhotos = function (container, photos) {
     container.innerHTML = '';
-    for (var i = 0; i < photos.length; i++) {
-      var photo = document.createElement('img');
-      photo.classList.add('popup__photo');
-      photo.src = photos[i];
-      photo.sizes = PhotoSizes.WIDTH;
-      photo.height = PhotoSizes.HEIGHT;
-      photo.alt = PHOTO_ALT;
-      container.appendChild(photo);
-    }
+
+    photos.forEach(function (photo) {
+      var photoElement = document.createElement('img');
+      photoElement.classList.add('popup__photo');
+      photoElement.src = photo;
+      photoElement.sizes = PhotoSizes.WIDTH;
+      photoElement.height = PhotoSizes.HEIGHT;
+      photoElement.alt = PHOTO_ALT;
+      container.appendChild(photoElement);
+    });
   };
 
   // Отрисовка карточки обьявлений
