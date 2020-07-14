@@ -85,7 +85,7 @@
     addressInput.setAttribute('readonly', 'readonly');
     titleForm.addEventListener('input', checkTitle);
     window.pin.postPins(newPins);
-    window.pin.closehandlerEventListener();
+    window.map.closehandlerEventListener();
     enableElements(mapFiltersForm);
     enableElements(mapFieldForm);
     window.map.getPinMainPosition(true);

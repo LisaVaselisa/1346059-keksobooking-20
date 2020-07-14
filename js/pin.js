@@ -40,18 +40,11 @@
     mapPins.appendChild(fragment);
   };
 
-  // Закрываем обработчик нажатия на главный пин при активации карты
-  var closehandlerEventListener = function () {
-    window.map.mapPinMain.removeEventListener('keydown', window.main.onHandlerKeyDown);
-    window.map.mapPinMain.removeEventListener('mousedown', window.main.onHandlerMouseDown);
-  };
-
   window.pin = {
     mapElement: mapElement,
     filtersContainer: filtersContainer,
     postPins: postPins,
     renderNewPin: renderNewPin,
-    closehandlerEventListener: closehandlerEventListener
   };
 
 })();

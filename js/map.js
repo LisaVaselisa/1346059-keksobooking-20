@@ -24,52 +24,48 @@
   mapPinMain.addEventListener('mousedown', window.main.onHandlerMouseDown);
   mapPinMain.addEventListener('keydown', window.main.onHandlerKeyDown);
 
-  // // 5-3 ПЕРЕМЕЩЕНИЕ
-  // // главный пин и его перемещение
-  // var positionLeft = window.data.mapLimitsMinX - mapPinMain.offsetWidth / 2;
-  // var positionRight = window.data.mapLimitsMaxX - mapPinMain.offsetWidth / 2;
-  // var positionTop = window.data.mapLimitsMinY - mapPinMain.offsetHeight - PIN_MAIN_HEIGHT_ACTIVE;
-  // var positionBottom = window.data.mapLimitsMaxY - mapPinMain.offsetHeight - PIN_MAIN_HEIGHT_ACTIVE;
+  // Закрываем обработчик нажатия на главный пин при активации карты
+  var closehandlerEventListener = function () {
+    mapPinMain.removeEventListener('keydown', window.main.onHandlerKeyDown);
+    mapPinMain.removeEventListener('mousedown', window.main.onHandlerMouseDown);
+  };
 
+  // Готовим элемент к перемещению
   var onMouseDown = function (evt) {
     evt.preventDefault();
 
     var mapPosition = window.pin.mapElement.getBoundingClientRect();
 
+    // Перемещаем элемент
     var onMouseMove = function (moveEvt) {
       moveEvt.preventDefault();
       getPinMainPosition();
 
       var result = {
-        y: moveEvt.clientY - mapPosition.top,
-        x: moveEvt.clientX - mapPosition.left
+        x: moveEvt.clientX - mapPosition.left,
+        y: moveEvt.clientY - mapPosition.top + 60
       };
 
-      mapPinMain.style.top = Math.max(MapLimits.MIN_Y, Math.min(MapLimits.MAX_Y, result.y)) - mapPinMain.offsetHeight + PIN_MAIN_HEIGHT_ACTIVE + 'px';
+      // Перемещение главного пина по карте
+      mapPinMain.style.top = Math.max(MapLimits.MIN_Y, Math.min(MapLimits.MAX_Y, result.y)) - mapPinMain.offsetHeight - PIN_MAIN_HEIGHT_ACTIVE + 'px';
       mapPinMain.style.left = Math.max(MapLimits.MIN_X, Math.min(locationMaxX, result.x)) - mapPinMain.offsetWidth / 2 + 'px';
-
-      // Добавляем смещение к текущим координатам
-
     };
 
-    // Останавливаем перетаскивание
+    // Останавливаем перемещение
     var onMouseUp = function (upEvt) {
       upEvt.preventDefault();
-      getPinMainPosition();
-
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseup', onMouseUp);
     };
-
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
-
   };
 
   mapPinMain.addEventListener('mousedown', onMouseDown);
 
   window.map = {
     mapPinMain: mapPinMain,
-    getPinMainPosition: getPinMainPosition
+    getPinMainPosition: getPinMainPosition,
+    closehandlerEventListener: closehandlerEventListener
   };
 })();
