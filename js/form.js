@@ -102,7 +102,7 @@
   var init = function () {
     enableElements(deactivePage);
     disableElements(mapFiltersForm);
-    window.backend.loadData(window.main.onSuccessLoad, window.main.onErrorLoad);
+    window.backend.loadData(window.notify.onSuccessLoad, window.notify.onErrorLoad);
   };
 
   roomsSelect.addEventListener('change', checkRoomsAndCapacity);
