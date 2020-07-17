@@ -1,37 +1,36 @@
 'use strict';
 // связывает другие модули
-
 (function () {
   // обработчики событий
-  var onHandlerMouseDown = function (evt) {
-    evt.preventDefault();
+  var onMouseDownHandler = function (evt) {
     if (evt.which === 1) {
+      evt.preventDefault();
       window.form.activePage();
     }
   };
 
-  var onHandlerKeyDown = function (evt) {
-    evt.preventDefault();
+  var onKeyDownHandler = function (evt) {
     if (evt.key === 'Enter') {
+      evt.preventDefault();
       window.map.closeCard();
       window.form.activePage();
     }
   };
 
-
-  var onHandlerEscDown = function (evt) {
-    evt.preventDefault();
+  var onEscDownHandler = function (evt) {
     if (evt.key === 'Escape') {
+      evt.preventDefault();
       window.map.closeCard();
     }
   };
 
   window.main = {
-    onHandlerMouseDown: onHandlerMouseDown,
-    onHandlerKeyDown: onHandlerKeyDown,
-    onHandlerEscDown: onHandlerEscDown,
+    // getRandomElement: getRandomElement,
+    // getRandomLenght: getRandomLenght,
+    onMouseDownHandler: onMouseDownHandler,
+    onKeyDownHandler: onKeyDownHandler,
+    onEscDownHandler: onEscDownHandler
   };
-
 })();
 
 

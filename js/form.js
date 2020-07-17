@@ -2,8 +2,7 @@
 // работает с формой объявления
 
 (function () {
-
-  var NUMBER_OBJECT = 8;
+  var newPins = [];
   var priceMin = {bungalo: 0, flat: 1000, house: 5000, palace: 10000};
   var adForm = document.querySelector('.ad-form');
   var adFormSubmit = adForm.querySelector('.ad-form__submit');
@@ -14,11 +13,11 @@
   var typeSelect = adForm.querySelector('#type');
   var mapFieldForm = adForm.querySelectorAll('fieldset, select, input');
   var addressInput = adForm.querySelector('#address');
+  var resetForm = adForm.querySelector('.ad-form__reset');
   var mapFilters = document.querySelector('.map__filters');
   var mapFiltersForm = mapFilters.querySelectorAll('fieldset, select, input');
   var timeIn = document.querySelector('#timein');
   var timeOut = document.querySelector('#timeout');
-
 
   // Неактивные элементы
   var disableElements = function (elements) {
@@ -75,21 +74,33 @@
     timeIn.value = timeOut.value;
   };
 
+  var savePins = function (data) {
+    newPins = data;
+  };
+
+  adForm.addEventListener('submit', function (evt) {
+    evt.preventDefault();
+    window.backend.uploadData(new FormData(adForm), window.notify.onSuccessUpload, window.notify.onErrorUpload);
+    deactivePage();
+  });
+
+  resetForm.addEventListener('click', function (evt) {
+    evt.preventDefault();
+    deactivePage();
+  });
+
   // Активное состоние страницы
   var activePage = function () {
     window.pin.mapElement.classList.remove('map--faded');
     adForm.classList.remove('ad-form--disabled');
     mapFilters.removeAttribute('disabled');
+    addressInput.setAttribute('readonly', 'readonly');
+    titleForm.addEventListener('input', checkTitle);
+    window.pin.postPins(newPins);
+    window.map.closehandlerEventListener();
     enableElements(mapFiltersForm);
     enableElements(mapFieldForm);
     window.map.getPinMainPosition(true);
-    addressInput.setAttribute('readonly', 'readonly');
-
-    titleForm.addEventListener('input', checkTitle);
-    var newPins = window.data.generateRandomObject(NUMBER_OBJECT);
-    window.map.postNewPin(newPins);
-    window.map.closehandlerEventListener();
-    // window.pin.mapElement.insertBefore(renderNewCard(newPins[0]), filtersContainer);
   };
 
   // Неактивное состояние страницы
@@ -97,13 +108,24 @@
     window.pin.mapElement.classList.add('map--faded');
     adForm.classList.add('ad-form--disabled');
     mapFilters.setAttribute('disabled', true);
+    // window.map.setHandlerEventListener();
+    adForm.reset();
+    mapFilters.reset();
+    window.pin.removePins();
+    window.card.closeCard();
+    window.map.mapPinMain.style.left = '570px'; // записать в константы
+    window.map.mapPinMain.style.top = '375px';
+    init();
   };
 
-  // Неактивное состояние страницы
   var init = function () {
     enableElements(deactivePage);
+    disableElements(mapFiltersForm);
     disableElements(mapFieldForm);
+    window.map.setHandlerEventListener();
+    window.backend.loadData(window.notify.onSuccessLoad, window.notify.onErrorLoad);
   };
+  init();
 
   roomsSelect.addEventListener('change', checkRoomsAndCapacity);
   capacitySelect.addEventListener('change', checkRoomsAndCapacity);
@@ -111,7 +133,6 @@
   typeSelect.addEventListener('change', installTypeAndPrice);
   timeIn.addEventListener('change', installTimeIn);
   timeOut.addEventListener('change', installTimeOut);
-  init();
 
   window.form = {
     addressInput: addressInput,
@@ -119,8 +140,7 @@
     enableElements: enableElements,
     checkTitle: checkTitle,
     activePage: activePage,
-    deactivePage: deactivePage
+    deactivePage: deactivePage,
+    savePins: savePins
   };
 })();
-
-

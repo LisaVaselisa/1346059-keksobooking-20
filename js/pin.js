@@ -2,37 +2,58 @@
 //  отвечает за создание метки на карте
 
 (function () {
+  var MAX_PINS = 5;
   var PinSizes = {WIDTH: 50, HEIGHT: 70};
-  var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
   var mapElement = document.querySelector('.map');
+  var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
+  var mapPins = document.querySelector('.map__pins');
   var filtersContainer = document.querySelector('.map__filters-container');
 
-
   // Отрисовка метки
-  var renderNewPin = function (newPin) {
-    var newPinElement = pinTemplate.cloneNode(true);
-    newPinElement.style.left = newPin.location.x - PinSizes.WIDTH / 2 + 'px';
-    newPinElement.style.top = newPin.location.y - PinSizes.HEIGHT + 'px';
+  var renderPin = function (newPin) {
+    var pinElement = pinTemplate.cloneNode(true);
+    var pinImg = pinElement.querySelector('img');
+    pinImg.src = newPin.author.avatar;
+    pinImg.alt = newPin.offer.title;
+    pinElement.style.left = newPin.location.x - PinSizes.WIDTH / 2 + 'px';
+    pinElement.style.top = newPin.location.y - PinSizes.HEIGHT + 'px';
 
-    var avatarPin = newPinElement.querySelector('img');
-    avatarPin.src = newPin.author.avatar;
-    avatarPin.alt = newPin.offer.title;
 
-    newPinElement.addEventListener('click', function () {
+    pinElement.addEventListener('click', function () {
       window.card.closeCard(); // закрыть предыдушую карту
-      mapElement.insertBefore(window.card.renderNewCard(newPin), filtersContainer);
-      document.addEventListener('keydown', window.main.onHandlerEscDown);
-      document.addEventListener('keydown', window.main.onHandlerKeyDown);
+      mapElement.insertBefore(window.card.renderCard(newPin), filtersContainer);
+      document.addEventListener('keydown', window.main.onEscDownHandler);
+      document.addEventListener('keydown', window.main.onKeyDownHandler);
     });
+    return pinElement;
+  };
 
-    return newPinElement;
+  // Разместить пины на карте
+  var postPins = function (newPins) {
+    var fragment = document.createDocumentFragment();
+
+    for (var i = 0; i < MAX_PINS; i++) {
+      fragment.appendChild(renderPin(newPins[i]));
+
+      if (newPins[i].offer) {
+        fragment.appendChild(renderPin(newPins[i]));
+      }
+    }
+    mapPins.appendChild(fragment);
+  };
+
+  // Убираем пины с карты
+  var removePins = function () {
+    var displayPins = mapElement.querySelectorAll('.map__pin:not(.map__pin--main)');
+    for (var i = 0; i < displayPins.length; i++) {
+      displayPins[i].remove();
+    }
   };
 
   window.pin = {
     mapElement: mapElement,
-    renderNewPin: renderNewPin
+    filtersContainer: filtersContainer,
+    postPins: postPins,
+    removePins: removePins
   };
-
 })();
-
-
