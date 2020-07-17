@@ -1,11 +1,10 @@
 'use strict';
 (function () {
-  var Url = {
-    URL_GET: 'https://javascript.pages.academy/keksobooking/data',
-    URL_POST: 'https://javascript.pages.academy/keksobooking'
-  };
-
   var TIMEOUT_IN_MS = 10000;
+  var Url = {
+    GET: 'https://javascript.pages.academy/keksobooking/data',
+    POST: 'https://javascript.pages.academy/keksobooking'
+  };
   var StatusCode = {
     OK: 200,
     WRONG_REQUEST: 400,
@@ -49,14 +48,14 @@
   // Отправка запроса на сервер
   var loadData = function (onSuccess, onError) {
     var xhr = createLoad(onSuccess, onError);
-    xhr.open('GET', Url.URL_GET);
+    xhr.open('GET', Url.GET);
     xhr.send();
   };
 
   // Отправка данных на сервер
   var uploadData = function (data, onSuccess, onError) {
     var xhr = createLoad(onSuccess, onError);
-    xhr.open('POST', Url.URL_POST);
+    xhr.open('POST', Url.POST);
     xhr.send(data);
   };
 

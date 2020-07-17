@@ -13,7 +13,7 @@
   var getPinMainPosition = function (activeState) {
     if (activeState === true) {
       var positionLeft = Math.round(mapPinMain.offsetLeft + mapPinMain.offsetWidth / 2);
-      var positionTop = Math.round(mapPinMain.offsetTop + mapPinMain.offsetHeight);
+      var positionTop = Math.round(mapPinMain.offsetTop + mapPinMain.offsetHeight / 2);
     } else {
       positionLeft = Math.round(mapPinMain.offsetLeft + mapPinMain.offsetWidth / 2);
       positionTop = Math.round(mapPinMain.offsetTop + mapPinMain.offsetHeight + PIN_MAIN_HEIGHT_ACTIVE);
@@ -21,13 +21,15 @@
     window.form.addressInput.value = positionLeft + ', ' + positionTop;
   };
 
-  mapPinMain.addEventListener('mousedown', window.main.onHandlerMouseDown);
-  mapPinMain.addEventListener('keydown', window.main.onHandlerKeyDown);
+  var setHandlerEventListener = function () {
+    mapPinMain.addEventListener('mousedown', window.main.onMouseDownHandler);
+    mapPinMain.addEventListener('keydown', window.main.onKeyDownHandler);
+  };
 
   // Закрываем обработчик нажатия на главный пин при активации карты
   var closehandlerEventListener = function () {
-    mapPinMain.removeEventListener('keydown', window.main.onHandlerKeyDown);
-    mapPinMain.removeEventListener('mousedown', window.main.onHandlerMouseDown);
+    mapPinMain.removeEventListener('keydown', window.main.onKeyDownHandler);
+    mapPinMain.removeEventListener('mousedown', window.main.onMouseDownHandler);
   };
 
   // Готовим элемент к перемещению
@@ -39,16 +41,16 @@
     // Перемещаем элемент
     var onMouseMove = function (moveEvt) {
       moveEvt.preventDefault();
-      getPinMainPosition();
 
       var result = {
-        x: moveEvt.clientX - mapPosition.left,
-        y: moveEvt.clientY - mapPosition.top + 60
+        x: Math.max(MapLimits.MIN_X, Math.min(locationMaxX, moveEvt.clientX - mapPosition.left)) - mapPinMain.offsetWidth / 2,
+        y: Math.max(MapLimits.MIN_Y, Math.min(MapLimits.MAX_Y, moveEvt.clientY - mapPosition.top)) - mapPinMain.offsetHeight - PIN_MAIN_HEIGHT_ACTIVE
       };
 
       // Перемещение главного пина по карте
-      mapPinMain.style.top = Math.max(MapLimits.MIN_Y, Math.min(MapLimits.MAX_Y, result.y)) - mapPinMain.offsetHeight - PIN_MAIN_HEIGHT_ACTIVE + 'px';
-      mapPinMain.style.left = Math.max(MapLimits.MIN_X, Math.min(locationMaxX, result.x)) - mapPinMain.offsetWidth / 2 + 'px';
+      mapPinMain.style.left = result.x + 'px';
+      mapPinMain.style.top = result.y + 'px';
+      getPinMainPosition();
     };
 
     // Останавливаем перемещение
@@ -65,6 +67,7 @@
 
   window.map = {
     mapPinMain: mapPinMain,
+    setHandlerEventListener: setHandlerEventListener,
     getPinMainPosition: getPinMainPosition,
     closehandlerEventListener: closehandlerEventListener
   };

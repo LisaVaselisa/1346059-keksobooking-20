@@ -13,6 +13,7 @@
   var typeSelect = adForm.querySelector('#type');
   var mapFieldForm = adForm.querySelectorAll('fieldset, select, input');
   var addressInput = adForm.querySelector('#address');
+  var resetForm = adForm.querySelector('.ad-form__reset');
   var mapFilters = document.querySelector('.map__filters');
   var mapFiltersForm = mapFilters.querySelectorAll('fieldset, select, input');
   var timeIn = document.querySelector('#timein');
@@ -77,9 +78,20 @@
     newPins = data;
   };
 
+  adForm.addEventListener('submit', function (evt) {
+    evt.preventDefault();
+    window.backend.uploadData(new FormData(adForm), window.notify.onSuccessUpload, window.notify.onErrorUpload);
+    deactivePage();
+  });
+
+  resetForm.addEventListener('click', function (evt) {
+    evt.preventDefault();
+    deactivePage();
+  });
+
   // Активное состоние страницы
   var activePage = function () {
-    window.pin.mapElement.classList.remove('map--faded'); // переводим в неактивное состояние
+    window.pin.mapElement.classList.remove('map--faded');
     adForm.classList.remove('ad-form--disabled');
     mapFilters.removeAttribute('disabled');
     addressInput.setAttribute('readonly', 'readonly');
@@ -89,21 +101,31 @@
     enableElements(mapFiltersForm);
     enableElements(mapFieldForm);
     window.map.getPinMainPosition(true);
-    // window.pin.mapElement.insertBefore(window.card.renderNewCard(newPins[0]), window.pin.filtersContainer);
   };
 
   // Неактивное состояние страницы
   var deactivePage = function () {
-    window.pin.mapElement.classList.add('map--faded'); // переводим в активное состояние
+    window.pin.mapElement.classList.add('map--faded');
     adForm.classList.add('ad-form--disabled');
     mapFilters.setAttribute('disabled', true);
+    // window.map.setHandlerEventListener();
+    adForm.reset();
+    mapFilters.reset();
+    window.pin.removePins();
+    window.card.closeCard();
+    window.map.mapPinMain.style.left = '570px'; // записать в константы
+    window.map.mapPinMain.style.top = '375px';
+    init();
   };
 
   var init = function () {
     enableElements(deactivePage);
     disableElements(mapFiltersForm);
+    disableElements(mapFieldForm);
+    window.map.setHandlerEventListener();
     window.backend.loadData(window.notify.onSuccessLoad, window.notify.onErrorLoad);
   };
+  init();
 
   roomsSelect.addEventListener('change', checkRoomsAndCapacity);
   capacitySelect.addEventListener('change', checkRoomsAndCapacity);
@@ -111,7 +133,6 @@
   typeSelect.addEventListener('change', installTypeAndPrice);
   timeIn.addEventListener('change', installTimeIn);
   timeOut.addEventListener('change', installTimeOut);
-  init();
 
   window.form = {
     addressInput: addressInput,
