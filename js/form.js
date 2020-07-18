@@ -3,7 +3,8 @@
 
 (function () {
   var newPins = [];
-  var priceMin = {bungalo: 0, flat: 1000, house: 5000, palace: 10000};
+  var PriceMin = {bungalo: 0, flat: 1000, house: 5000, palace: 10000};
+  var PinStartPosition = {X: '570px', Y: '375px'};
   var adForm = document.querySelector('.ad-form');
   var adFormSubmit = adForm.querySelector('.ad-form__submit');
   var titleForm = adForm.querySelector('#title');
@@ -18,7 +19,7 @@
   var mapFiltersForm = mapFilters.querySelectorAll('fieldset, select, input');
   var timeIn = document.querySelector('#timein');
   var timeOut = document.querySelector('#timeout');
-  var pinStartPosition = {X: '570px', Y: '375px'};
+
 
   // Неактивные элементы
   var disableElements = function (elements) {
@@ -62,8 +63,8 @@
 
   // Зависимость типа жилья и цены
   var installTypeAndPrice = function () {
-    priceSelect.min = priceMin[typeSelect.value];
-    priceSelect.placeholder = priceMin[typeSelect.value];
+    priceSelect.min = PriceMin[typeSelect.value];
+    priceSelect.placeholder = PriceMin[typeSelect.value];
   };
 
   // Зависимость времени заезда и выезда
@@ -109,13 +110,12 @@
     window.pin.mapElement.classList.add('map--faded');
     adForm.classList.add('ad-form--disabled');
     mapFilters.setAttribute('disabled', true);
-    // window.map.setHandlerEventListener();
     adForm.reset();
     mapFilters.reset();
     window.pin.removePins();
     window.card.closeCard();
-    window.map.pinMain.style.left = pinStartPosition.X;
-    window.map.pinMain.style.top = pinStartPosition.Y;
+    window.map.pinMain.style.left = PinStartPosition.X;
+    window.map.pinMain.style.top = PinStartPosition.Y;
     init();
   };
 

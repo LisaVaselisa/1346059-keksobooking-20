@@ -5,8 +5,8 @@
 // осуществляет взаимодействие карточки и метки на карте
 
 (function () {
-  var MapLimits = {MIN_X: 0, MIN_Y: 130, MAX_Y: 630};
   var PIN_MAIN_HEIGHT_ACTIVE = 22;
+  var MapLimits = {MIN_X: 0, MIN_Y: 130, MAX_Y: 630};
   var locationMaxX = document.querySelector('.map__overlay').offsetWidth;
   var pinMain = document.querySelector('.map__pin--main');
 
