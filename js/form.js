@@ -18,6 +18,7 @@
   var mapFiltersForm = mapFilters.querySelectorAll('fieldset, select, input');
   var timeIn = document.querySelector('#timein');
   var timeOut = document.querySelector('#timeout');
+  var pinStartPosition = {X: '570px', Y: '375px'};
 
   // Неактивные элементы
   var disableElements = function (elements) {
@@ -97,7 +98,7 @@
     addressInput.setAttribute('readonly', 'readonly');
     titleForm.addEventListener('input', checkTitle);
     window.pin.postPins(newPins);
-    window.map.closehandlerEventListener();
+    window.map.closeHandlerEventListener();
     enableElements(mapFiltersForm);
     enableElements(mapFieldForm);
     window.map.getPinMainPosition(true);
@@ -113,8 +114,8 @@
     mapFilters.reset();
     window.pin.removePins();
     window.card.closeCard();
-    window.map.mapPinMain.style.left = '570px'; // записать в константы
-    window.map.mapPinMain.style.top = '375px';
+    window.map.pinMain.style.left = pinStartPosition.X;
+    window.map.pinMain.style.top = pinStartPosition.Y;
     init();
   };
 
