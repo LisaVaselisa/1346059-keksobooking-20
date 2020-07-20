@@ -12,7 +12,7 @@
   var onKeyDownHandler = function (evt) {
     if (evt.key === 'Enter') {
       evt.preventDefault();
-      window.map.closeCard();
+      window.map.removeCard();
       window.form.activePage();
     }
   };
@@ -20,7 +20,7 @@
   var onEscDownHandler = function (evt) {
     if (evt.key === 'Escape') {
       evt.preventDefault();
-      window.map.closeCard();
+      window.map.removeCard();
     }
   };
 

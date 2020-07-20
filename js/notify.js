@@ -46,6 +46,7 @@
   var onSuccessLoad = function (data) {
     window.form.savePins(data);
     // window.filter.getFilterPins(data);
+    // window.form.filterPins(data);
   };
 
   var onErrorLoad = function (message) {

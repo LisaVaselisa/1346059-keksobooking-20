@@ -90,6 +90,14 @@
     deactivePage();
   });
 
+  var filterPins = function (arr) {
+    arr = window.filter.getFilterPins(newPins);
+    window.pin.postPins(arr);
+    window.pin.removePins();
+    window.card.removeCard();
+
+  };
+
   // Активное состоние страницы
   var activePage = function () {
     window.pin.mapElement.classList.remove('map--faded');
@@ -97,7 +105,8 @@
     mapFilters.removeAttribute('disabled');
     addressInput.setAttribute('readonly', 'readonly');
     titleForm.addEventListener('input', checkTitle);
-    window.pin.postPins(newPins);
+    filterPins();
+    // window.pin.postPins(newPins);
     window.map.closeHandlerEventListener();
     enableElements(mapFiltersForm);
     enableElements(mapFieldForm);
@@ -136,12 +145,14 @@
   mapFilters.addEventListener('change', window.filter.filterPins);
 
   window.form = {
+    newPins: newPins,
     addressInput: addressInput,
     disableElements: disableElements,
     enableElements: enableElements,
     checkTitle: checkTitle,
     activePage: activePage,
     deactivePage: deactivePage,
-    savePins: savePins
+    savePins: savePins,
+    filterPins: filterPins
   };
 })();

@@ -50,14 +50,14 @@
     renderPhotos(offerPhotos, newCard.offer.photos);
 
     cardElement.addEventListener('click', function () {
-      closeCard();
+      removeCard();
       document.addEventListener('keydown', window.main.onKeyDownHandler);
     });
     return cardElement;
   };
 
   // Удалить карточку
-  var closeCard = function () {
+  var removeCard = function () {
     var mapCard = document.querySelector('.map__card');
     if (mapCard) {
       mapCard.querySelector('.popup__close');
@@ -68,7 +68,7 @@
 
   window.card = {
     renderCard: renderCard,
-    closeCard: closeCard
+    removeCard: removeCard
   };
 })();
 

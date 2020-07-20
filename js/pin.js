@@ -20,7 +20,7 @@
 
 
     pinElement.addEventListener('click', function () {
-      window.card.closeCard();
+      window.card.removeCard();
       pinElement.classList.add('map__pin--active');
       mapElement.insertBefore(window.card.renderCard(newPin), filtersContainer);
       document.addEventListener('keydown', window.main.onEscDownHandler);
