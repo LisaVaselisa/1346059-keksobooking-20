@@ -44,15 +44,13 @@
   };
 
   var onSuccessLoad = function (data) {
-    // window.pin.renderNewPin(data);
     window.form.savePins(data);
+    // window.filter.getFilterPins(data);
   };
 
   var onErrorLoad = function (message) {
     showError(message);
   };
-
-  // _________________________6-3
 
   var closeSuccess = function () {
     document.querySelector('div.success').remove();

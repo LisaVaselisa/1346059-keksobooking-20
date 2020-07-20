@@ -3,8 +3,8 @@
 
 (function () {
   var PHOTO_ALT = ['Фотография жилья'];
-  var PhotoSizes = {WIDTH: 45, HEIGHT: 40};
-  var TypesRooms = {'palace': 'Дворец', 'flat': 'Квартира', 'house': 'Дом', 'bungalo': 'Бунгало'};
+  var PhotoSize = {WIDTH: 45, HEIGHT: 40};
+  var TypesRoom = {'palace': 'Дворец', 'flat': 'Квартира', 'house': 'Дом', 'bungalo': 'Бунгало'};
   var cardTemplate = document.querySelector('#card').content.querySelector('.popup');
 
   // Генерировать предложение для карточки
@@ -25,8 +25,8 @@
       var photoElement = document.createElement('img');
       photoElement.classList.add('popup__photo');
       photoElement.src = photo;
-      photoElement.sizes = PhotoSizes.WIDTH;
-      photoElement.height = PhotoSizes.HEIGHT;
+      photoElement.sizes = PhotoSize.WIDTH;
+      photoElement.height = PhotoSize.HEIGHT;
       photoElement.alt = PHOTO_ALT;
       container.appendChild(photoElement);
     });
@@ -41,7 +41,7 @@
     cardElement.querySelector('.popup__title').textContent = newCard.offer.title;
     cardElement.querySelector('.popup__text--address').textContent = newCard.offer.address;
     cardElement.querySelector('.popup__text--price').textContent = newCard.offer.price + '₽/ночь';
-    cardElement.querySelector('.popup__type').textContent = TypesRooms[newCard.offer.type];
+    cardElement.querySelector('.popup__type').textContent = TypesRoom[newCard.offer.type];
     cardElement.querySelector('.popup__text--capacity').textContent = newCard.offer.rooms + ' комнат(ы) для ' + newCard.offer.guests + ' гостей';
     cardElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + newCard.offer.checkin + ', выезд до ' + newCard.offer.checkout;
     cardElement.querySelector('.popup__avatar').src = newCard.author.avatar;

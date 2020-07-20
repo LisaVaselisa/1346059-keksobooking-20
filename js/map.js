@@ -6,7 +6,7 @@
 
 (function () {
   var PIN_MAIN_HEIGHT_ACTIVE = 22;
-  var MapLimits = {MIN_X: 0, MIN_Y: 130, MAX_Y: 630};
+  var MapLimit = {MIN_X: 0, MIN_Y: 130, MAX_Y: 630};
   var locationMaxX = document.querySelector('.map__overlay').offsetWidth;
   var pinMain = document.querySelector('.map__pin--main');
 
@@ -43,8 +43,8 @@
       moveEvt.preventDefault();
 
       var result = {
-        x: Math.max(MapLimits.MIN_X, Math.min(locationMaxX, moveEvt.clientX - mapPosition.left)) - pinMain.offsetWidth / 2,
-        y: Math.max(MapLimits.MIN_Y, Math.min(MapLimits.MAX_Y, moveEvt.clientY - mapPosition.top)) - pinMain.offsetHeight - PIN_MAIN_HEIGHT_ACTIVE
+        x: Math.max(MapLimit.MIN_X, Math.min(locationMaxX, moveEvt.clientX - mapPosition.left)) - pinMain.offsetWidth / 2,
+        y: Math.max(MapLimit.MIN_Y, Math.min(MapLimit.MAX_Y, moveEvt.clientY - mapPosition.top)) - pinMain.offsetHeight - PIN_MAIN_HEIGHT_ACTIVE
       };
 
       // Перемещение главного пина по карте

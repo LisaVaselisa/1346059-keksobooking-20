@@ -3,7 +3,7 @@
 
 (function () {
   var MAX_PINS = 5;
-  var PinSizes = {WIDTH: 50, HEIGHT: 70};
+  var PinSize = {WIDTH: 50, HEIGHT: 70};
   var mapElement = document.querySelector('.map');
   var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
   var mapPins = document.querySelector('.map__pins');
@@ -15,12 +15,13 @@
     var pinImg = pinElement.querySelector('img');
     pinImg.src = newPin.author.avatar;
     pinImg.alt = newPin.offer.title;
-    pinElement.style.left = newPin.location.x - PinSizes.WIDTH / 2 + 'px';
-    pinElement.style.top = newPin.location.y - PinSizes.HEIGHT + 'px';
+    pinElement.style.left = newPin.location.x - PinSize.WIDTH / 2 + 'px';
+    pinElement.style.top = newPin.location.y - PinSize.HEIGHT + 'px';
 
 
     pinElement.addEventListener('click', function () {
       window.card.closeCard();
+      pinElement.classList.add('map__pin--active');
       mapElement.insertBefore(window.card.renderCard(newPin), filtersContainer);
       document.addEventListener('keydown', window.main.onEscDownHandler);
       document.addEventListener('keydown', window.main.onKeyDownHandler);
@@ -54,6 +55,8 @@
     mapElement: mapElement,
     filtersContainer: filtersContainer,
     postPins: postPins,
-    removePins: removePins
+    removePins: removePins,
+
+
   };
 })();

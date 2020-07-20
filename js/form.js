@@ -20,7 +20,6 @@
   var timeIn = document.querySelector('#timein');
   var timeOut = document.querySelector('#timeout');
 
-
   // Неактивные элементы
   var disableElements = function (elements) {
     for (var i = 0; i < elements.length; i++) {
@@ -134,6 +133,7 @@
   typeSelect.addEventListener('change', installTypeAndPrice);
   timeIn.addEventListener('change', installTimeIn);
   timeOut.addEventListener('change', installTimeOut);
+  mapFilters.addEventListener('change', window.filter.filterPins);
 
   window.form = {
     addressInput: addressInput,
