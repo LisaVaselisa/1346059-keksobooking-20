@@ -2,10 +2,13 @@
 
 (function () {
   var FILE_TYPES = ['jpg', 'png', 'jpeg', 'gif'];
-  var avatarChooser = document.querySelector('#avatar');
+  var avatarChooser = document.querySelector('.ad-form-header__input');
+  var avatarPhoto = document.querySelector('.ad-form-header__img');
   var housingChooser = document.querySelector('#images');
-  var avatarPhoto = document.querySelector('.ad-form-header__preview img');
   var hausingPhoto = document.querySelector('.ad-form__photo');
+  var hausingPhotoContainer = document.querySelector('.ad-form__photo-container');
+  var avatarPhotoScr = avatarPhoto.src;
+
 
   avatarChooser.addEventListener('change', function () {
     var file = avatarChooser.files[0];
@@ -44,14 +47,16 @@
 
   // Убираем фото
   var removePhotos = function () {
-    var avatarPhotoScr = avatarPhoto.src;
     avatarPhoto.src = avatarPhotoScr;
     avatarPhoto.innerHTML = '';
     hausingPhoto.innerHTML = '';
+    hausingPhotoContainer.querySelectorAll('.ad-form__photo').forEach(function (photoElement) {
+      photoElement.remove();
+    });
+    hausingPhotoContainer.appendChild(hausingPhoto);
   };
 
   window.preview = {
     removePhotos: removePhotos
-
   };
 })();

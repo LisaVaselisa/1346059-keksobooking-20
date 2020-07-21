@@ -118,6 +118,7 @@
     mapFilter.setAttribute('disabled', true);
     adForm.reset();
     mapFilter.reset();
+    setTypeAndPrice();
     window.pin.removePins();
     window.card.removeCard();
     window.preview.removePhotos();
