@@ -1,36 +1,33 @@
 'use strict';
-//  отвечает за вывод сообщений об отправки формы
 
 (function () {
   var successTemplate = document.querySelector('#success').content.querySelector('.success');
   var errorTemplate = document.querySelector('#error').content.querySelector('.error');
 
-  // Обработчики ошибок
-  var onEscErrorHandler = function (evt) {
+  var escErrorHandler = function (evt) {
     if (evt.key === 'Escape') {
       evt.preventDefault();
       removeError();
     }
   };
-  var onClickErrorHandler = function (evt) {
+  var clickErrorHandler = function (evt) {
     if (evt.target === document.querySelector('div.error')) {
       evt.preventDefault();
       removeError();
     }
   };
 
-  var onClickButtonHandler = function () {
+  var clickButtonHandler = function () {
     removeError();
   };
 
   var removeError = function () {
     document.querySelector('div.error').remove();
-    document.removeEventListener('keydown', onEscErrorHandler);
-    document.removeEventListener('click', onClickErrorHandler);
-    document.removeEventListener('click', onClickButtonHandler);
+    document.removeEventListener('keydown', escErrorHandler);
+    document.removeEventListener('click', clickErrorHandler);
+    document.removeEventListener('click', clickButtonHandler);
   };
 
-  // Сообщения об ошибке
   var showError = function (errorMessage) {
     var errorElement = errorTemplate.cloneNode(true);
     var messageError = errorElement.querySelector('.error__message');
@@ -38,13 +35,12 @@
 
     var message = document.querySelector('main').appendChild(errorTemplate);
     var errorButton = message.querySelector('.error__button');
-    document.addEventListener('keydown', onEscErrorHandler);
-    document.addEventListener('click', onClickErrorHandler);
-    errorButton.addEventListener('click', onClickButtonHandler);
+    document.addEventListener('keydown', escErrorHandler);
+    document.addEventListener('click', clickErrorHandler);
+    errorButton.addEventListener('click', clickButtonHandler);
   };
 
   var onSuccessLoad = function (data) {
-    // window.pin.renderNewPin(data);
     window.form.savePins(data);
   };
 
@@ -52,27 +48,24 @@
     showError(message);
   };
 
-  // _________________________6-3
-
-  var closeSuccess = function () {
+  var removeSuccess = function () {
     document.querySelector('div.success').remove();
-    document.removeEventListener('keydown', onEscSuccessHandler);
-    document.removeEventListener('click', onClickSuccessHandler);
+    document.removeEventListener('keydown', escSuccessHandler);
+    document.removeEventListener('click', clickSuccessHandler);
     window.form.deactivePage();
   };
 
-  // Обработчик при удачной отправки
-  var onEscSuccessHandler = function (evt) {
+  var escSuccessHandler = function (evt) {
     if (evt.key === 'Escape') {
       evt.preventDefault();
-      closeSuccess();
+      removeSuccess();
     }
   };
 
-  var onClickSuccessHandler = function (evt) {
+  var clickSuccessHandler = function (evt) {
     if (evt.target === document.querySelector('div.success')) {
       evt.preventDefault();
-      closeSuccess();
+      removeSuccess();
     }
   };
 
@@ -81,8 +74,8 @@
     var messageSuccess = successElement.querySelector('.success__message');
     messageSuccess.textContent = successMessage;
     document.querySelector('main').appendChild(successTemplate);
-    document.addEventListener('keydown', onEscSuccessHandler);
-    document.addEventListener('click', onClickSuccessHandler);
+    document.addEventListener('keydown', escSuccessHandler);
+    document.addEventListener('click', clickSuccessHandler);
   };
 
   var onSuccessUpload = function () {

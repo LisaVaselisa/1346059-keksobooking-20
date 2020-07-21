@@ -1,8 +1,6 @@
 'use strict';
-//  отвечает за создание метки на карте
 
 (function () {
-  var MAX_PINS = 5;
   var PinSizes = {WIDTH: 50, HEIGHT: 70};
   var mapElement = document.querySelector('.map');
   var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
@@ -20,19 +18,20 @@
 
 
     pinElement.addEventListener('click', function () {
-      window.card.closeCard();
+      window.card.removeCard();
+      pinElement.classList.add('map__pin--active');
       mapElement.insertBefore(window.card.renderCard(newPin), filtersContainer);
-      document.addEventListener('keydown', window.main.onEscDownHandler);
-      document.addEventListener('keydown', window.main.onKeyDownHandler);
+      document.addEventListener('keydown', window.main.escDownHandler);
+      document.addEventListener('keydown', window.main.keyDownHandler);
     });
     return pinElement;
   };
 
   // Разместить пины на карте
-  var postPins = function (newPins) {
+  var showPins = function (newPins) {
     var fragment = document.createDocumentFragment();
 
-    for (var i = 0; i < MAX_PINS; i++) {
+    for (var i = 0; i < newPins.length; i++) {
       fragment.appendChild(renderPin(newPins[i]));
 
       if (newPins[i].offer) {
@@ -45,15 +44,15 @@
   // Убираем пины с карты
   var removePins = function () {
     var displayPins = mapElement.querySelectorAll('.map__pin:not(.map__pin--main)');
-    for (var i = 0; i < displayPins.length; i++) {
-      displayPins[i].remove();
-    }
+    displayPins.forEach(function (element) {
+      element.remove();
+    });
   };
 
   window.pin = {
     mapElement: mapElement,
     filtersContainer: filtersContainer,
-    postPins: postPins,
-    removePins: removePins
+    showPins: showPins,
+    removePins: removePins,
   };
 })();
