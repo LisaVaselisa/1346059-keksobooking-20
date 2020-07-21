@@ -1,8 +1,4 @@
 'use strict';
-// управляет карточками объявлений и метками:
-// добавляет на страницу нужную карточку
-// отрисовывает метки
-// осуществляет взаимодействие карточки и метки на карте
 
 (function () {
   var PIN_MAIN_HEIGHT_ACTIVE = 22;
@@ -18,18 +14,18 @@
       positionLeft = Math.round(pinMain.offsetLeft + pinMain.offsetWidth / 2);
       positionTop = Math.round(pinMain.offsetTop + pinMain.offsetHeight + PIN_MAIN_HEIGHT_ACTIVE);
     }
-    window.form.addressForm.value = positionLeft + ', ' + positionTop;
+    window.form.addressSelect.value = positionLeft + ', ' + positionTop;
   };
 
   var setHandlerEventListener = function () {
-    pinMain.addEventListener('mousedown', window.main.MouseDownHandler);
-    pinMain.addEventListener('keydown', window.main.KeyDownHandler);
+    pinMain.addEventListener('mousedown', window.main.mouseDownHandler);
+    pinMain.addEventListener('keydown', window.main.keyDownHandler);
   };
 
   // Закрываем обработчик нажатия на главный пин при активации карты
   var removeHandlerEventListener = function () {
-    pinMain.removeEventListener('keydown', window.main.KeyDownHandler);
-    pinMain.removeEventListener('mousedown', window.main.MouseDownHandler);
+    pinMain.removeEventListener('keydown', window.main.keyDownHandler);
+    pinMain.removeEventListener('mousedown', window.main.mouseDownHandler);
   };
 
   // Готовим элемент к перемещению

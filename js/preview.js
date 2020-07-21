@@ -45,7 +45,6 @@
     }
   });
 
-  // Убираем фото
   var removePhotos = function () {
     avatarPhoto.src = avatarPhotoScr;
     avatarPhoto.innerHTML = '';

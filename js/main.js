@@ -1,15 +1,15 @@
 'use strict';
-// связывает другие модули
+
 (function () {
   // обработчики событий
-  var MouseDownHandler = function (evt) {
+  var mouseDownHandler = function (evt) {
     if (evt.which === 1) {
       evt.preventDefault();
       window.form.activePage();
     }
   };
 
-  var KeyDownHandler = function (evt) {
+  var keyDownHandler = function (evt) {
     if (evt.key === 'Enter') {
       evt.preventDefault();
       window.map.removeCard();
@@ -17,7 +17,7 @@
     }
   };
 
-  var EscDownHandler = function (evt) {
+  var escDownHandler = function (evt) {
     if (evt.key === 'Escape') {
       evt.preventDefault();
       window.map.removeCard();
@@ -25,9 +25,9 @@
   };
 
   window.main = {
-    MouseDownHandler: MouseDownHandler,
-    KeyDownHandler: KeyDownHandler,
-    EscDownHandler: EscDownHandler
+    mouseDownHandler: mouseDownHandler,
+    keyDownHandler: keyDownHandler,
+    escDownHandler: escDownHandler
   };
 })();
 

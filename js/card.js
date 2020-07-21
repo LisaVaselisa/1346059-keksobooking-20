@@ -1,5 +1,4 @@
 'use strict';
-// отвечает за создание карточки объявлений
 
 (function () {
   var PHOTO_ALT = 'Фотография жилья';
@@ -52,7 +51,6 @@
     var offerPhotos = cardElement.querySelector('.popup__photos');
 
     cardElement.querySelector('.popup__title').textContent = newCard.offer.title;
-
     cardElement.querySelector('.popup__text--address').textContent = newCard.offer.address;
     cardElement.querySelector('.popup__text--price').textContent = newCard.offer.price + '₽/ночь';
     cardElement.querySelector('.popup__type').textContent = TypeRooms[newCard.offer.type];
@@ -64,19 +62,18 @@
     renderPhotos(offerPhotos, newCard.offer.photos);
 
     cardElement.addEventListener('click', function () {
-      document.addEventListener('keydown', window.main.KeyDownHandler);
+      document.addEventListener('keydown', window.main.keyDownHandler);
       removeCard();
     });
     return cardElement;
   };
 
-  // Удалить карточку
   var removeCard = function () {
     var mapCard = document.querySelector('.map__card');
     if (mapCard) {
       mapCard.querySelector('.popup__close');
       mapCard.remove();
-      document.removeEventListener('keydown', window.main.KeyDownHandler);
+      document.removeEventListener('keydown', window.main.keyDownHandler);
     }
   };
 

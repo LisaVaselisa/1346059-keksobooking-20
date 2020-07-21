@@ -1,5 +1,4 @@
 'use strict';
-//  отвечает за создание метки на карте
 
 (function () {
   var PinSizes = {WIDTH: 50, HEIGHT: 70};
@@ -22,8 +21,8 @@
       window.card.removeCard();
       pinElement.classList.add('map__pin--active');
       mapElement.insertBefore(window.card.renderCard(newPin), filtersContainer);
-      document.addEventListener('keydown', window.main.EscDownHandler);
-      document.addEventListener('keydown', window.main.KeyDownHandler);
+      document.addEventListener('keydown', window.main.escDownHandler);
+      document.addEventListener('keydown', window.main.keyDownHandler);
     });
     return pinElement;
   };
@@ -45,8 +44,6 @@
   // Убираем пины с карты
   var removePins = function () {
     var displayPins = mapElement.querySelectorAll('.map__pin:not(.map__pin--main)');
-    // for (var i = 0; i < displayPins.length; i++) {
-    //   displayPins[i].remove();
     displayPins.forEach(function (element) {
       element.remove();
     });
