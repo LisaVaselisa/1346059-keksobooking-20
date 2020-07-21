@@ -2,23 +2,23 @@
 // работает с формой объявления
 
 (function () {
-  var newPins = [];
-  var PriceMin = {bungalo: 0, flat: 1000, house: 5000, palace: 10000};
-  var PinStartPosition = {X: '570px', Y: '375px'};
+  var PricesMin = {bungalo: 0, flat: 1000, house: 5000, palace: 10000};
+  var PinStartingPositions = {X: '570px', Y: '375px'};
   var adForm = document.querySelector('.ad-form');
-  var adFormSubmit = adForm.querySelector('.ad-form__submit');
+  var submitForm = adForm.querySelector('.ad-form__submit');
   var titleForm = adForm.querySelector('#title');
-  var priceSelect = adForm.querySelector('#price');
-  var roomsSelect = adForm.querySelector('#room_number');
-  var capacitySelect = adForm.querySelector('#capacity');
-  var typeSelect = adForm.querySelector('#type');
+  var priceForm = adForm.querySelector('#price');
+  var roomsForm = adForm.querySelector('#room_number');
+  var capacityForm = adForm.querySelector('#capacity');
+  var typeForm = adForm.querySelector('#type');
   var mapFieldForm = adForm.querySelectorAll('fieldset, select, input');
-  var addressInput = adForm.querySelector('#address');
+  var addressForm = adForm.querySelector('#address');
   var resetForm = adForm.querySelector('.ad-form__reset');
-  var mapFilters = document.querySelector('.map__filters');
-  var mapFiltersForm = mapFilters.querySelectorAll('fieldset, select, input');
+  var mapFilter = document.querySelector('.map__filters');
+  var mapFiltersForm = mapFilter.querySelectorAll('fieldset, select, input');
   var timeIn = document.querySelector('#timein');
   var timeOut = document.querySelector('#timeout');
+  var newPins = [];
 
   // Неактивные элементы
   var disableElements = function (elements) {
@@ -49,29 +49,29 @@
 
   // Сообщения, когда вводим количество гостей и комнат
   var checkRoomsAndCapacity = function () {
-    if (roomsSelect.value === '100' && capacitySelect.value !== '0') {
-      roomsSelect.setCustomValidity('Количество гостей не должно превышать количество комнат');
-    } else if (roomsSelect.value !== '100' && capacitySelect.value === '0') {
-      roomsSelect.setCustomValidity('Выберите количество гостей');
-    } else if (roomsSelect.value < capacitySelect.value && capacitySelect.value !== '0') {
-      roomsSelect.setCustomValidity('Количество комнат не должно быть меньше количества гостей');
+    if (roomsForm.value === '100' && capacityForm.value !== '0') {
+      roomsForm.setCustomValidity('Количество гостей не должно превышать количество комнат');
+    } else if (roomsForm.value !== '100' && capacityForm.value === '0') {
+      roomsForm.setCustomValidity('Выберите количество гостей');
+    } else if (roomsForm.value < capacityForm.value && capacityForm.value !== '0') {
+      roomsForm.setCustomValidity('Количество комнат не должно быть меньше количества гостей');
     } else {
-      roomsSelect.setCustomValidity('');
+      roomsForm.setCustomValidity('');
     }
   };
 
   // Зависимость типа жилья и цены
-  var installTypeAndPrice = function () {
-    priceSelect.min = PriceMin[typeSelect.value];
-    priceSelect.placeholder = PriceMin[typeSelect.value];
+  var setTypeAndPrice = function () {
+    priceForm.min = PricesMin[typeForm.value];
+    priceForm.placeholder = PricesMin[typeForm.value];
   };
 
   // Зависимость времени заезда и выезда
-  var installTimeIn = function () {
+  var setTimeIn = function () {
     timeOut.value = timeIn.value;
   };
 
-  var installTimeOut = function () {
+  var setTimeOut = function () {
     timeIn.value = timeOut.value;
   };
 
@@ -90,24 +90,22 @@
     deactivePage();
   });
 
-  var filterPins = function (arr) {
+  var filteredPins = function (arr) {
     arr = window.filter.getFilterPins(newPins);
-    window.pin.postPins(arr);
     window.pin.removePins();
     window.card.removeCard();
-
+    window.pin.showPins(arr);
   };
 
   // Активное состоние страницы
   var activePage = function () {
     window.pin.mapElement.classList.remove('map--faded');
     adForm.classList.remove('ad-form--disabled');
-    mapFilters.removeAttribute('disabled');
-    addressInput.setAttribute('readonly', 'readonly');
+    mapFilter.removeAttribute('disabled');
+    addressForm.setAttribute('readonly', 'readonly');
     titleForm.addEventListener('input', checkTitle);
-    filterPins();
-    // window.pin.postPins(newPins);
-    window.map.closeHandlerEventListener();
+    filteredPins();
+    window.map.removeHandlerEventListener();
     enableElements(mapFiltersForm);
     enableElements(mapFieldForm);
     window.map.getPinMainPosition(true);
@@ -117,13 +115,14 @@
   var deactivePage = function () {
     window.pin.mapElement.classList.add('map--faded');
     adForm.classList.add('ad-form--disabled');
-    mapFilters.setAttribute('disabled', true);
+    mapFilter.setAttribute('disabled', true);
     adForm.reset();
-    mapFilters.reset();
+    mapFilter.reset();
     window.pin.removePins();
-    window.card.closeCard();
-    window.map.pinMain.style.left = PinStartPosition.X;
-    window.map.pinMain.style.top = PinStartPosition.Y;
+    window.card.removeCard();
+    window.preview.removePhotos();
+    window.map.pinMain.style.left = PinStartingPositions.X;
+    window.map.pinMain.style.top = PinStartingPositions.Y;
     init();
   };
 
@@ -136,23 +135,23 @@
   };
   init();
 
-  roomsSelect.addEventListener('change', checkRoomsAndCapacity);
-  capacitySelect.addEventListener('change', checkRoomsAndCapacity);
-  adFormSubmit.addEventListener('click', checkRoomsAndCapacity);
-  typeSelect.addEventListener('change', installTypeAndPrice);
-  timeIn.addEventListener('change', installTimeIn);
-  timeOut.addEventListener('change', installTimeOut);
-  mapFilters.addEventListener('change', window.filter.filterPins);
+  roomsForm.addEventListener('change', checkRoomsAndCapacity);
+  capacityForm.addEventListener('change', checkRoomsAndCapacity);
+  submitForm.addEventListener('click', checkRoomsAndCapacity);
+  typeForm.addEventListener('change', setTypeAndPrice);
+  timeIn.addEventListener('change', setTimeIn);
+  timeOut.addEventListener('change', setTimeOut);
+  mapFilter.addEventListener('change', window.debounce(filteredPins));
 
   window.form = {
     newPins: newPins,
-    addressInput: addressInput,
+    addressForm: addressForm,
     disableElements: disableElements,
     enableElements: enableElements,
     checkTitle: checkTitle,
     activePage: activePage,
     deactivePage: deactivePage,
     savePins: savePins,
-    filterPins: filterPins
+    filteredPins: filteredPins
   };
 })();

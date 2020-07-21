@@ -2,8 +2,7 @@
 //  отвечает за создание метки на карте
 
 (function () {
-  var MAX_PINS = 5;
-  var PinSize = {WIDTH: 50, HEIGHT: 70};
+  var PinSizes = {WIDTH: 50, HEIGHT: 70};
   var mapElement = document.querySelector('.map');
   var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
   var mapPins = document.querySelector('.map__pins');
@@ -15,25 +14,25 @@
     var pinImg = pinElement.querySelector('img');
     pinImg.src = newPin.author.avatar;
     pinImg.alt = newPin.offer.title;
-    pinElement.style.left = newPin.location.x - PinSize.WIDTH / 2 + 'px';
-    pinElement.style.top = newPin.location.y - PinSize.HEIGHT + 'px';
+    pinElement.style.left = newPin.location.x - PinSizes.WIDTH / 2 + 'px';
+    pinElement.style.top = newPin.location.y - PinSizes.HEIGHT + 'px';
 
 
     pinElement.addEventListener('click', function () {
       window.card.removeCard();
       pinElement.classList.add('map__pin--active');
       mapElement.insertBefore(window.card.renderCard(newPin), filtersContainer);
-      document.addEventListener('keydown', window.main.onEscDownHandler);
-      document.addEventListener('keydown', window.main.onKeyDownHandler);
+      document.addEventListener('keydown', window.main.EscDownHandler);
+      document.addEventListener('keydown', window.main.KeyDownHandler);
     });
     return pinElement;
   };
 
   // Разместить пины на карте
-  var postPins = function (newPins) {
+  var showPins = function (newPins) {
     var fragment = document.createDocumentFragment();
 
-    for (var i = 0; i < MAX_PINS; i++) {
+    for (var i = 0; i < newPins.length; i++) {
       fragment.appendChild(renderPin(newPins[i]));
 
       if (newPins[i].offer) {
@@ -46,17 +45,17 @@
   // Убираем пины с карты
   var removePins = function () {
     var displayPins = mapElement.querySelectorAll('.map__pin:not(.map__pin--main)');
-    for (var i = 0; i < displayPins.length; i++) {
-      displayPins[i].remove();
-    }
+    // for (var i = 0; i < displayPins.length; i++) {
+    //   displayPins[i].remove();
+    displayPins.forEach(function (element) {
+      element.remove();
+    });
   };
 
   window.pin = {
     mapElement: mapElement,
     filtersContainer: filtersContainer,
-    postPins: postPins,
+    showPins: showPins,
     removePins: removePins,
-
-
   };
 })();

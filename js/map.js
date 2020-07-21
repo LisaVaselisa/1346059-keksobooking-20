@@ -6,7 +6,7 @@
 
 (function () {
   var PIN_MAIN_HEIGHT_ACTIVE = 22;
-  var MapLimit = {MIN_X: 0, MIN_Y: 130, MAX_Y: 630};
+  var MapLimits = {MIN_X: 0, MIN_Y: 130, MAX_Y: 630};
   var locationMaxX = document.querySelector('.map__overlay').offsetWidth;
   var pinMain = document.querySelector('.map__pin--main');
 
@@ -18,18 +18,18 @@
       positionLeft = Math.round(pinMain.offsetLeft + pinMain.offsetWidth / 2);
       positionTop = Math.round(pinMain.offsetTop + pinMain.offsetHeight + PIN_MAIN_HEIGHT_ACTIVE);
     }
-    window.form.addressInput.value = positionLeft + ', ' + positionTop;
+    window.form.addressForm.value = positionLeft + ', ' + positionTop;
   };
 
   var setHandlerEventListener = function () {
-    pinMain.addEventListener('mousedown', window.main.onMouseDownHandler);
-    pinMain.addEventListener('keydown', window.main.onKeyDownHandler);
+    pinMain.addEventListener('mousedown', window.main.MouseDownHandler);
+    pinMain.addEventListener('keydown', window.main.KeyDownHandler);
   };
 
   // Закрываем обработчик нажатия на главный пин при активации карты
-  var closeHandlerEventListener = function () {
-    pinMain.removeEventListener('keydown', window.main.onKeyDownHandler);
-    pinMain.removeEventListener('mousedown', window.main.onMouseDownHandler);
+  var removeHandlerEventListener = function () {
+    pinMain.removeEventListener('keydown', window.main.KeyDownHandler);
+    pinMain.removeEventListener('mousedown', window.main.MouseDownHandler);
   };
 
   // Готовим элемент к перемещению
@@ -43,8 +43,8 @@
       moveEvt.preventDefault();
 
       var result = {
-        x: Math.max(MapLimit.MIN_X, Math.min(locationMaxX, moveEvt.clientX - mapPosition.left)) - pinMain.offsetWidth / 2,
-        y: Math.max(MapLimit.MIN_Y, Math.min(MapLimit.MAX_Y, moveEvt.clientY - mapPosition.top)) - pinMain.offsetHeight - PIN_MAIN_HEIGHT_ACTIVE
+        x: Math.max(MapLimits.MIN_X, Math.min(locationMaxX, moveEvt.clientX - mapPosition.left)) - pinMain.offsetWidth / 2,
+        y: Math.max(MapLimits.MIN_Y, Math.min(MapLimits.MAX_Y, moveEvt.clientY - mapPosition.top)) - pinMain.offsetHeight - PIN_MAIN_HEIGHT_ACTIVE
       };
 
       // Перемещение главного пина по карте
@@ -69,6 +69,6 @@
     pinMain: pinMain,
     setHandlerEventListener: setHandlerEventListener,
     getPinMainPosition: getPinMainPosition,
-    closeHandlerEventListener: closeHandlerEventListener
+    removeHandlerEventListener: removeHandlerEventListener
   };
 })();

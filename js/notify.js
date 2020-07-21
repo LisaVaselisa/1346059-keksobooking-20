@@ -19,7 +19,7 @@
     }
   };
 
-  var onClickButtonHandler = function () {
+  var ClickButtonHandler = function () {
     removeError();
   };
 
@@ -27,7 +27,7 @@
     document.querySelector('div.error').remove();
     document.removeEventListener('keydown', onEscErrorHandler);
     document.removeEventListener('click', onClickErrorHandler);
-    document.removeEventListener('click', onClickButtonHandler);
+    document.removeEventListener('click', ClickButtonHandler);
   };
 
   // Сообщения об ошибке
@@ -40,38 +40,38 @@
     var errorButton = message.querySelector('.error__button');
     document.addEventListener('keydown', onEscErrorHandler);
     document.addEventListener('click', onClickErrorHandler);
-    errorButton.addEventListener('click', onClickButtonHandler);
+    errorButton.addEventListener('click', ClickButtonHandler);
   };
 
   var onSuccessLoad = function (data) {
     window.form.savePins(data);
     // window.filter.getFilterPins(data);
-    // window.form.filterPins(data);
+    // window.form.filteredPins(data);
   };
 
   var onErrorLoad = function (message) {
     showError(message);
   };
 
-  var closeSuccess = function () {
+  var removeSuccess = function () {
     document.querySelector('div.success').remove();
-    document.removeEventListener('keydown', onEscSuccessHandler);
-    document.removeEventListener('click', onClickSuccessHandler);
+    document.removeEventListener('keydown', EscSuccessHandler);
+    document.removeEventListener('click', ClickSuccessHandler);
     window.form.deactivePage();
   };
 
   // Обработчик при удачной отправки
-  var onEscSuccessHandler = function (evt) {
+  var EscSuccessHandler = function (evt) {
     if (evt.key === 'Escape') {
       evt.preventDefault();
-      closeSuccess();
+      removeSuccess();
     }
   };
 
-  var onClickSuccessHandler = function (evt) {
+  var ClickSuccessHandler = function (evt) {
     if (evt.target === document.querySelector('div.success')) {
       evt.preventDefault();
-      closeSuccess();
+      removeSuccess();
     }
   };
 
@@ -80,8 +80,8 @@
     var messageSuccess = successElement.querySelector('.success__message');
     messageSuccess.textContent = successMessage;
     document.querySelector('main').appendChild(successTemplate);
-    document.addEventListener('keydown', onEscSuccessHandler);
-    document.addEventListener('click', onClickSuccessHandler);
+    document.addEventListener('keydown', EscSuccessHandler);
+    document.addEventListener('click', ClickSuccessHandler);
   };
 
   var onSuccessUpload = function () {
