@@ -5,7 +5,7 @@
   var mouseDownHandler = function (evt) {
     if (evt.which === 1) {
       evt.preventDefault();
-      window.form.activePage();
+      window.form.activatePage();
     }
   };
 
@@ -13,7 +13,7 @@
     if (evt.key === 'Enter') {
       evt.preventDefault();
       window.map.removeCard();
-      window.form.activePage();
+      window.form.activatePage();
     }
   };
 

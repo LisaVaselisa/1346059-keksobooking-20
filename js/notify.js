@@ -42,17 +42,19 @@
 
   var onSuccessLoad = function (data) {
     window.form.savePins(data);
+    window.form.filteredPins();
   };
 
   var onErrorLoad = function (message) {
     showError(message);
+    window.form.deactivatePage();
   };
 
   var removeSuccess = function () {
     document.querySelector('div.success').remove();
     document.removeEventListener('keydown', escSuccessHandler);
     document.removeEventListener('click', clickSuccessHandler);
-    window.form.deactivePage();
+    window.form.deactivatePage();
   };
 
   var escSuccessHandler = function (evt) {

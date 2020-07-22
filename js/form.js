@@ -77,12 +77,12 @@
   formSelect.addEventListener('submit', function (evt) {
     evt.preventDefault();
     window.backend.uploadData(new FormData(formSelect), window.notify.onSuccessUpload, window.notify.onErrorUpload);
-    deactivePage();
+    deactivatePage();
   });
 
   resetForm.addEventListener('click', function (evt) {
     evt.preventDefault();
-    deactivePage();
+    deactivatePage();
   });
 
   var filteredPins = function (arr) {
@@ -93,21 +93,21 @@
   };
 
   // Активное состоние страницы
-  var activePage = function () {
+  var activatePage = function () {
     window.pin.mapElement.classList.remove('map--faded');
     formSelect.classList.remove('ad-form--disabled');
     mapFilter.removeAttribute('disabled');
     addressSelect.setAttribute('readonly', 'readonly');
     titleForm.addEventListener('input', checkTitle);
-    filteredPins();
     window.map.removeHandlerEventListener();
     enableElements(mapFiltersForm);
     enableElements(mapFieldForm);
     window.map.getPinMainPosition(true);
+    window.backend.loadData(window.notify.onSuccessLoad, window.notify.onErrorLoad);
   };
 
   // Неактивное состояние страницы
-  var deactivePage = function () {
+  var deactivatePage = function () {
     window.pin.mapElement.classList.add('map--faded');
     formSelect.classList.add('ad-form--disabled');
     mapFilter.setAttribute('disabled', true);
@@ -123,11 +123,10 @@
   };
 
   var init = function () {
-    enableElements(deactivePage);
+    enableElements(deactivatePage);
     disableElements(mapFiltersForm);
     disableElements(mapFieldForm);
     window.map.setHandlerEventListener();
-    window.backend.loadData(window.notify.onSuccessLoad, window.notify.onErrorLoad);
   };
   init();
 
@@ -145,8 +144,8 @@
     disableElements: disableElements,
     enableElements: enableElements,
     checkTitle: checkTitle,
-    activePage: activePage,
-    deactivePage: deactivePage,
+    activatePage: activatePage,
+    deactivatePage: deactivatePage,
     savePins: savePins,
     filteredPins: filteredPins
   };
